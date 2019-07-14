@@ -5,6 +5,7 @@ import Home from '@/views/Home'
 import KepalaKeluarga from '@/views/KepalaKeluarga'
 import Warga from '@/views/Warga'
 import RetribusiKebersihan from '@/views/RetribusiKebersihan'
+import RetribusiKeamanan from '@/views/RetribusiKeamanan'
 
 Vue.use(Router)
 
@@ -34,6 +35,11 @@ export default new Router({
       path: '/retribusikebersihan',
       name: 'retribusiKebersihan',
       component: RetribusiKebersihan
+    },
+    {
+      path: '/retribusikeamanan',
+      name: 'retribusiKeamanan',
+      component: RetribusiKeamanan
     },
   ]
 })

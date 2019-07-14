@@ -28,7 +28,7 @@
       transition="dialog-bottom-transition">
       <v-card>
         <v-card-title>
-          <h3>Detail Retribusi Kebersihan</h3>
+          <h3>Detail Retribusi Keamanan</h3>
         </v-card-title>
         <v-card-text>
           <v-autocomplete
@@ -113,7 +113,7 @@ export default {
 
     async getData() {
       const result = await axios
-        .get(URL + '/retribusi/kebersihan')
+        .get(URL + '/retribusi/keamanan')
         .then(response => response.data.data);
 
       this.items = result;
@@ -124,7 +124,7 @@ export default {
       this.dialog = true;
 
       const detail = await axios
-        .get(URL + '/retribusi/kebersihan/' + target)
+        .get(URL + '/retribusi/keamanan/' + target)
         .then(response => response.data.data);
 
       this.kepalaKeluarga = detail.kepala_keluarga;

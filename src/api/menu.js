@@ -22,6 +22,12 @@ const menus = [
     icon: 'mdi-trash-can',
     href: '/retribusikebersihan',
     title: 'Retribusi Kebersihan'
+  },
+  {
+    name: 'retribusiKeamanan',
+    icon: 'mdi-account-key',
+    href: '/retribusikeamanan',
+    title: 'Retribusi Keamanan'
   }
 ]
 
