@@ -24,7 +24,7 @@
         </v-navigation-drawer>
         <v-toolbar color="warning" light extended>
           <v-toolbar-side-icon class="white--text" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-          <v-toolbar-title class="white--text">Daftar Warga</v-toolbar-title>
+          <v-toolbar-title class="white--text">Daftar Warga Temporary</v-toolbar-title>
           <v-btn
             fab
             color="grey lighten-5"
@@ -43,88 +43,78 @@
           transition="dialog-bottom-transition">
           <v-card>
             <v-card-title>
-              <h3>Tambah Warga Baru</h3>
+              <h3>Tambah Warga Temporary Baru</h3>
             </v-card-title>
             <v-card-text>
               <v-form v-model="valid" ref="form" lazy-validation>
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="warning"
-                  flat
-                  outline
-                  class="text-lg-right"
-                  @click="newdata">
-                  <v-icon>mdi-file-plus</v-icon>
-                  Tambah Warga
-                </v-btn>
-                <v-divider></v-divider>
-                <v-layout wrap row v-for="(warga, index) in dataWarga" :key="index">
+                <v-layout>
                   <v-flex xs12>
-                    <v-autocomplete
-                      v-model="warga.kepalaKeluarga"
-                      :items="KKList"
+                    <v-text-field
+                      v-model="nama"
                       :rules="nameRules"
-                      label="Kepala Keluarga">
+                      label="Nama Lengkap"></v-text-field>
+
+                    <v-select
+                      v-model="jk"
+                      :items="jkList"
+                      :rules="nameRules"
+                      label="Jenis Kelamin">
+                    </v-select>
+
+                    <v-text-field
+                      v-model="identitas"
+                      :rules="nameRules"
+                      label="No Identitas"></v-text-field>
+
+                    <v-select
+                      v-model="jenisIdentitas"
+                      :items="jenisIdentitasList"
+                      :rules="nameRules"
+                      label="Jenis Identitas">
+                    </v-select>
+
+                    <v-autocomplete
+                      v-model="kewarganegaraan"
+                      :items="countries"
+                      :rules="nameRules"
+                      item-text="name"
+                      item-value="name"
+                      label="Kewarganegaraan">
                     </v-autocomplete>
 
-                    <v-text-field
-                      v-model="warga.noKtp"
-                      label="No KTP"
+                    <v-textarea
+                      v-model="alamat"
                       :rules="nameRules"
-                      type="number">
-                    </v-text-field>
+                      label="Alamat">
+                    </v-textarea>
 
-                    <v-text-field
-                      v-model="warga.namaLengkap"
-                      label="Nama Lengkap"
-                      :rules="nameRules">
-
-                    </v-text-field>
+                    <v-autocomplete
+                      v-model="pemilikTempat"
+                      :items="KKList"
+                      :rules="nameRules"
+                      label="Pemilik Tempat Sewa">
+                    </v-autocomplete>
 
                     <v-select
-                      v-model="warga.status"
-                      label="Status Dalam Keluarga"
+                      v-model="tipeSewa"
+                      :items="types"
                       :rules="nameRules"
-                      :items="statusList">
-                    </v-select>
-
-                    <v-radio-group
-                      v-model="warga.jk"
-                      label="Jenis Kelamin"
-                      :mandatory="false">
-
-                      <v-radio label="Laki-Laki" value="1"></v-radio>
-                      <v-radio label="Perempuan" value="2"></v-radio>
-                    </v-radio-group>
-
-                    <v-select
-                      v-model="warga.pekerjaan"
-                      label="Pekerjaan"
-                      :rules="nameRules"
-                      :items="pekerjaanList">
+                      label="Tipe Tempat Sewa">
                     </v-select>
 
                     <v-text-field
-                      v-model="warga.penghasilan"
-                      label="Penghasilan"
+                      v-model="hargaSewa"
                       :rules="nameRules"
-                      v-money="money">
-                    </v-text-field>
+                      label="Harga Sewa"
+                      v-money="money"></v-text-field>
 
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      color="error"
-                      flat
-                      outline
-                      class="text-lg-right"
-                      @click="removedata(index)">
-                      <v-icon>mdi-close-box</v-icon>
-                       Hapus Kolom
-                    </v-btn>
+                    <v-select
+                      v-model="pekerjaan"
+                      :items="pekerjaanList"
+                      :rules="nameRules"
+                      label="Pekerjaan">
+                    </v-select>
 
-                  </v-flex>
-                  <v-flex xs12>
-                    <v-divider></v-divider>
                   </v-flex>
                 </v-layout>
               </v-form>
@@ -141,6 +131,7 @@
 </template>
 <script>
 import eventBus from '@/views/eventBus'
+import countries from './config'
 import URL from '@/api/url'
 import menus from '@/api/menu'
 import axios from 'axios'
@@ -160,9 +151,21 @@ export default {
     dataWarga: [],
     nameRules: [v => !!v || "Kolom wajib diisi"],
     KKList: [],
-    statusList: ['Ayah', 'Ibu', 'Anak'],
-    radio: 1,
+    jkList: [
+      {
+        text: 'Laki-Laki',
+        value: 1
+      },
+      {
+        text: 'Perempuan',
+        value: 2
+      }
+    ],
     pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
+    countries: countries,
+    jenisIdentitasList: ['KTP', 'KITAS', 'Passport'],
+    types: ['Kost', 'Kontrakan', 'Milik Saudara'],
+
     money: {
       decimal: '.',
       thousands: ',',
@@ -170,7 +173,19 @@ export default {
       suffix: '',
       precision: '',
       masked: false /* doesn't work with directive */
-    }
+    },
+
+    nama: '',
+    jk: '',
+    identitas: '',
+    jenisIdentitas: '',
+    kewarganegaraan: '',
+    alamat: '',
+    pemilikTempat: '',
+    tipeSewa: '',
+    hargaSewa: 0,
+    pekerjaan: ''
+
   }),
 
   mounted() {
@@ -196,22 +211,6 @@ export default {
       this.KKList = newList;
     },
 
-    newdata() {
-      this.dataWarga.push({
-        kepalaKeluarga: '',
-        noKtp: '',
-        namaLengkap: '',
-        status: '',
-        jk: '',
-        pekerjaan: '',
-        penghasilan: ''
-      });
-    },
-
-    removedata(index) {
-      this.dataWarga.splice(index, 1);
-    },
-
     close() {
       this.dialog = false;
     },
@@ -219,20 +218,29 @@ export default {
     async submit() {
       this.loading = true;
       const payload = {
-        dataWarga: this.dataWarga
+        namaLengkap: this.nama,
+        jenisKelamin: parseInt(this.jk),
+        identitas: this.identitas,
+        jenisIdentitas: this.jenisIdentitas,
+        kewarganegaraan: this.kewarganegaraan,
+        alamat: this.alamat,
+        pemilikTempat: parseInt(this.pemilikTempat),
+        tipeTempatSewa: this.tipeSewa,
+        hargaSewa: parseFloat(this.hargaSewa.replace(/,/g, '')),
+        pekerjaan: this.pekerjaan
       }
 
-      
-      const storing = await axios 
-      .post(URL + '/master/insertwarga', payload, undefined)
-      .then(response => response.data);
 
-      if(storing.status === true) {
+      const storing = await axios
+        .post(URL + '/temporary/insert', payload, undefined)
+        .then(response => response.data);
+
+      if (storing.status === true) {
         this.dialog = false;
         this.loading = false;
         eventBus.$emit('DATA_LOADED');
         this.$snackbar(storing.message);
-      }else { 
+      } else {
         this.loading = false;
         this.$snackbar(storing.message);
       }

@@ -6,6 +6,7 @@ import KepalaKeluarga from '@/views/KepalaKeluarga'
 import Warga from '@/views/Warga'
 import RetribusiKebersihan from '@/views/RetribusiKebersihan'
 import RetribusiKeamanan from '@/views/RetribusiKeamanan'
+import Temporary from '@/views/Temporary'
 
 Vue.use(Router)
 
@@ -40,6 +41,11 @@ export default new Router({
       path: '/retribusikeamanan',
       name: 'retribusiKeamanan',
       component: RetribusiKeamanan
+    },
+    {
+      path: '/temporary',
+      name: 'temporary',
+      component: Temporary
     },
   ]
 })

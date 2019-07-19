@@ -28,6 +28,12 @@ const menus = [
     icon: 'mdi-account-key',
     href: '/retribusikeamanan',
     title: 'Retribusi Keamanan'
+  },
+  {
+    name: 'temporary',
+    icon: 'mdi-account-edit',
+    href: '/temporary',
+    title: 'Warga Temporary'
   }
 ]
 

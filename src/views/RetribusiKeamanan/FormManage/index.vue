@@ -175,7 +175,7 @@ export default {
         this.$snackbar(storing.message);
       } else {
         this.loading = false;
-        this.$$snackbar(storing.message);
+        this.$snackbar(storing.message);
       }
     }
   },
