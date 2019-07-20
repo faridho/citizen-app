@@ -62,6 +62,45 @@
                     </v-select>
 
                     <v-text-field
+                      v-model="tempatLahir"
+                      label="Tempat Lahir"
+                      :rules="nameRules">
+                    </v-text-field>
+
+                    <v-menu
+                      v-model="menu2"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px">
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="tanggalLahir"
+                          label="Tanggal Lahir"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-on="on"></v-text-field>
+                      </template>
+                      <v-date-picker v-model="tanggalLahir" @input="menu2 = false"></v-date-picker>
+                    </v-menu>
+
+                    <v-select
+                      v-model="agama"
+                      label="Agama"
+                      :rules="nameRules"
+                      :items="agamaList">
+                    </v-select>
+
+                    <v-text-field
+                      v-model="noTelp"
+                      :rules="nameRules"
+                      type="number"
+                      label="No Telp"></v-text-field>
+
+                    <v-text-field
                       v-model="identitas"
                       :rules="nameRules"
                       label="No Identitas"></v-text-field>
@@ -81,6 +120,12 @@
                       item-value="name"
                       label="Kewarganegaraan">
                     </v-autocomplete>
+
+                    <v-text-field
+                      v-model="kotaAsal"
+                      label="Kota Asal"
+                      :rules="nameRules">
+                    </v-text-field>
 
                     <v-textarea
                       v-model="alamat"
@@ -163,6 +208,7 @@ export default {
     ],
     pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
     countries: countries,
+    agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
     jenisIdentitasList: ['KTP', 'KITAS', 'Passport'],
     types: ['Kost', 'Kontrakan', 'Milik Saudara'],
 
@@ -177,6 +223,8 @@ export default {
 
     nama: '',
     jk: '',
+    agama: '',
+    noTelp: '',
     identitas: '',
     jenisIdentitas: '',
     kewarganegaraan: '',
@@ -184,7 +232,11 @@ export default {
     pemilikTempat: '',
     tipeSewa: '',
     hargaSewa: 0,
-    pekerjaan: ''
+    pekerjaan: '',
+    tempatLahir: '',
+    tanggalLahir: '',
+    menu2: false,
+    kotaAsal: ''
 
   }),
 
@@ -216,33 +268,39 @@ export default {
     },
 
     async submit() {
-      this.loading = true;
-      const payload = {
-        namaLengkap: this.nama,
-        jenisKelamin: parseInt(this.jk),
-        identitas: this.identitas,
-        jenisIdentitas: this.jenisIdentitas,
-        kewarganegaraan: this.kewarganegaraan,
-        alamat: this.alamat,
-        pemilikTempat: parseInt(this.pemilikTempat),
-        tipeTempatSewa: this.tipeSewa,
-        hargaSewa: parseFloat(this.hargaSewa.replace(/,/g, '')),
-        pekerjaan: this.pekerjaan
-      }
+      if (this.$refs.form.validate()) {
+        this.loading = true;
+        const payload = {
+          namaLengkap: this.nama,
+          jenisKelamin: parseInt(this.jk),
+          tanggalLahir: this.tanggalLahir,
+          tempatLahir: this.tempatLahir,
+          noTelp: parseInt(this.noTelp),
+          identitas: this.identitas,
+          jenisIdentitas: this.jenisIdentitas,
+          kewarganegaraan: this.kewarganegaraan,
+          kotaAsal: this.kotaAsal,
+          alamat: this.alamat,
+          pemilikTempat: parseInt(this.pemilikTempat),
+          tipeTempatSewa: this.tipeSewa,
+          hargaSewa: parseFloat(this.hargaSewa.replace(/,/g, '')),
+          pekerjaan: this.pekerjaan
+        }
 
 
-      const storing = await axios
-        .post(URL + '/temporary/insert', payload, undefined)
-        .then(response => response.data);
+        const storing = await axios
+          .post(URL + '/temporary/insert', payload, undefined)
+          .then(response => response.data);
 
-      if (storing.status === true) {
-        this.dialog = false;
-        this.loading = false;
-        eventBus.$emit('DATA_LOADED');
-        this.$snackbar(storing.message);
-      } else {
-        this.loading = false;
-        this.$snackbar(storing.message);
+        if (storing.status === true) {
+          this.dialog = false;
+          this.loading = false;
+          eventBus.$emit('DATA_LOADED');
+          this.$snackbar(storing.message);
+        } else {
+          this.loading = false;
+          this.$snackbar(storing.message);
+        }
       }
     }
   },

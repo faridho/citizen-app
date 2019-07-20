@@ -53,6 +53,13 @@
                   :rules="nameRules">
                 </v-text-field>
                 <v-text-field
+                  label="No Kartu Keluarga"
+                  type="number"
+                  v-model="noKK"
+                  :rules="nameRules"
+                >
+                </v-text-field>
+                <v-text-field
                   label="Telepon"
                   type="number"
                   v-model="telepon"
@@ -113,6 +120,7 @@ export default {
 
     namaKepalaKeluarga: '',
     telepon: '',
+    noKK: '',
     noRumah: '',
     statusRumah: '',
     statusRumahList: ['Milik Sendiri', 'Kontrak', 'Numpang', 'Kost'],
@@ -134,6 +142,7 @@ export default {
         this.loading = true;
         const payload = {
           namaKepalaKeluarga: this.namaKepalaKeluarga,
+          noKK: this.noKK,
           telepon: this.telepon,
           noRumah: parseInt(this.noRumah),
           statusRumah: this.statusRumah,

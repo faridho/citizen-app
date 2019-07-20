@@ -46,6 +46,45 @@
               </v-select>
 
               <v-text-field
+                v-model="tempatLahir"
+                label="Tempat Lahir"
+                :rules="nameRules">
+              </v-text-field>
+
+              <v-menu
+                v-model="menu2"
+                :close-on-content-click="false"
+                :nudge-right="40"
+                lazy
+                transition="scale-transition"
+                offset-y
+                full-width
+                min-width="290px">
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="tanggalLahir"
+                    label="Tanggal Lahir"
+                    prepend-icon="mdi-calendar"
+                    readonly
+                    v-on="on"></v-text-field>
+                </template>
+                <v-date-picker v-model="tanggalLahir" @input="menu2 = false"></v-date-picker>
+              </v-menu>
+
+              <v-select
+                v-model="agama"
+                label="Agama"
+                :rules="nameRules"
+                :items="agamaList">
+              </v-select>
+
+              <v-text-field
+                v-model="noTelp"
+                :rules="nameRules"
+                type="number"
+                label="No Telp"></v-text-field>
+
+              <v-text-field
                 v-model="identitas"
                 :rules="nameRules"
                 label="No Identitas"></v-text-field>
@@ -65,6 +104,12 @@
                 item-value="name"
                 label="Kewarganegaraan">
               </v-autocomplete>
+
+              <v-text-field
+                v-model="kotaAsal"
+                label="Kota Asal"
+                :rules="nameRules">
+              </v-text-field>
 
               <v-textarea
                 v-model="alamat"
@@ -89,8 +134,7 @@
               <v-text-field
                 v-model="hargaSewa"
                 :rules="nameRules"
-                label="Harga Sewa"
-              ></v-text-field>
+                label="Harga Sewa"></v-text-field>
 
               <v-select
                 v-model="pekerjaan"
@@ -138,11 +182,14 @@ export default {
     ],
     pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
     countries: countries,
+    agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
     jenisIdentitasList: ['KTP', 'KITAS', 'Passport'],
     types: ['Kost', 'Kontrakan', 'Milik Saudara'],
 
     nama: '',
     jk: '',
+    agama: '',
+    noTelp: '',
     identitas: '',
     jenisIdentitas: '',
     kewarganegaraan: '',
@@ -150,7 +197,11 @@ export default {
     pemilikTempat: '',
     tipeSewa: '',
     hargaSewa: 0,
-    pekerjaan: ''
+    pekerjaan: '',
+    tempatLahir: '',
+    tanggalLahir: '',
+    menu2: false,
+    kotaAsal: ''
 
   }),
 
@@ -194,16 +245,21 @@ export default {
         .get(URL + '/temporary/get/' + target)
         .then(response => response.data.data);
 
-      this.nama = detail.nama_lengkap,
-      this.jk = detail.jenis_kelamin,
-      this.identitas = detail.identitas,
-      this.jenisIdentitas = detail.jenis_identitas,
-      this.kewarganegaraan = detail.kewarganegaraan,
-      this.alamat = detail.alamat,
-      this.pemilikTempat = detail.pemilik_tempat,
-      this.tipeSewa = detail.tipe_tempat_sewa,
-      this.hargaSewa = detail.harga_sewa,
-      this.pekerjaan = detail.pekerjaan
+      this.nama = detail.nama_lengkap;
+      this.jk = detail.jenis_kelamin
+      this.agama = detail.agama;
+      this.noTelp = detail.no_telp;
+      this.identitas = detail.identitas;
+      this.jenisIdentitas = detail.jenis_identitas;
+      this.kewarganegaraan = detail.kewarganegaraan;
+      this.alamat = detail.alamat;
+      this.pemilikTempat = detail.pemilik_tempat;
+      this.tipeSewa = detail.tipe_tempat_sewa;
+      this.hargaSewa = detail.harga_sewa;
+      this.pekerjaan = detail.pekerjaan;
+      this.tempatLahir = detail.tempat_lahir,
+      this.tanggalLahir = detail.tanggal_lahir,
+      this.kotaAsal = detail.kota_asal;
 
     },
 

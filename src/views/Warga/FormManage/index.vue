@@ -74,6 +74,13 @@
                       type="number">
                     </v-text-field>
 
+                    <v-select
+                      v-model="warga.agama"
+                      label="Agama"
+                      :rules="nameRules"
+                      :items="agamaList">
+                    </v-select>
+
                     <v-text-field
                       v-model="warga.namaLengkap"
                       label="Nama Lengkap"
@@ -97,6 +104,32 @@
                       <v-radio label="Perempuan" value="2"></v-radio>
                     </v-radio-group>
 
+                    <v-text-field
+                      v-model="warga.tempatLahir"
+                      label="Tempat Lahir"
+                      :rules="nameRules">
+                    </v-text-field>
+
+                    <v-menu
+                      v-model="warga.menu2"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px">
+                      <template v-slot:activator="{ on }">
+                        <v-text-field
+                          v-model="warga.tanggalLahir"
+                          label="Tanggal Lahir"
+                          prepend-icon="mdi-calendar"
+                          readonly
+                          v-on="on"></v-text-field>
+                      </template>
+                      <v-date-picker v-model="warga.tanggalLahir" @input="warga.menu2 = false"></v-date-picker>
+                    </v-menu>
+
                     <v-select
                       v-model="warga.pekerjaan"
                       label="Pekerjaan"
@@ -119,7 +152,7 @@
                       class="text-lg-right"
                       @click="removedata(index)">
                       <v-icon>mdi-close-box</v-icon>
-                       Hapus Kolom
+                      Hapus Kolom
                     </v-btn>
 
                   </v-flex>
@@ -150,7 +183,7 @@ import MasterList from './List'
 
 Vue.use(money, { precision: 4 })
 export default {
-  data: () => ({
+  data: vm => ({
     valid: true,
     drawer: null,
     dialog: false,
@@ -161,6 +194,7 @@ export default {
     nameRules: [v => !!v || "Kolom wajib diisi"],
     KKList: [],
     statusList: ['Ayah', 'Ibu', 'Anak'],
+    agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
     radio: 1,
     pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
     money: {
@@ -170,7 +204,8 @@ export default {
       suffix: '',
       precision: '',
       masked: false /* doesn't work with directive */
-    }
+    },
+
   }),
 
   mounted() {
@@ -200,9 +235,12 @@ export default {
       this.dataWarga.push({
         kepalaKeluarga: '',
         noKtp: '',
+        agama: '',
         namaLengkap: '',
         status: '',
         jk: '',
+        tempatLahir: '',
+        tanggalLahir: '',
         pekerjaan: '',
         penghasilan: ''
       });
@@ -217,24 +255,26 @@ export default {
     },
 
     async submit() {
-      this.loading = true;
-      const payload = {
-        dataWarga: this.dataWarga
-      }
+      if (this.$refs.form.validate()) {
+        this.loading = true;
+        const payload = {
+          dataWarga: this.dataWarga
+        }
 
-      
-      const storing = await axios 
-      .post(URL + '/master/insertwarga', payload, undefined)
-      .then(response => response.data);
 
-      if(storing.status === true) {
-        this.dialog = false;
-        this.loading = false;
-        eventBus.$emit('DATA_LOADED');
-        this.$snackbar(storing.message);
-      }else { 
-        this.loading = false;
-        this.$snackbar(storing.message);
+        const storing = await axios
+          .post(URL + '/master/insertwarga', payload, undefined)
+          .then(response => response.data);
+
+        if (storing.status === true) {
+          this.dialog = false;
+          this.loading = false;
+          eventBus.$emit('DATA_LOADED');
+          this.$snackbar(storing.message);
+        } else {
+          this.loading = false;
+          this.$snackbar(storing.message);
+        }
       }
     }
   },

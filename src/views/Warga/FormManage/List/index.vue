@@ -45,6 +45,13 @@
             type="number">
           </v-text-field>
 
+          <v-select
+            v-model="agama"
+            label="Agama"
+            :rules="nameRules"
+            :items="agamaList">
+          </v-select>
+
           <v-text-field
             v-model="namaLengkap"
             label="Nama Lengkap"
@@ -67,6 +74,32 @@
             <v-radio label="Laki-Laki" value="1"></v-radio>
             <v-radio label="Perempuan" value="2"></v-radio>
           </v-radio-group>
+
+          <v-text-field
+            v-model="tempatLahir"
+            label="Tempat Lahir"
+            :rules="nameRules">
+          </v-text-field>
+
+          <v-menu
+            v-model="menu2"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            lazy
+            transition="scale-transition"
+            offset-y
+            full-width
+            min-width="290px">
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                v-model="tanggalLahir"
+                label="Tanggal Lahir"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-on="on"></v-text-field>
+            </template>
+            <v-date-picker v-model="tanggalLahir" @input="menu2 = false"></v-date-picker>
+          </v-menu>
 
           <v-select
             v-model="pekerjaan"
@@ -105,15 +138,20 @@ export default {
 
     KKList: [],
     statusList: ['Ayah', 'Ibu', 'Anak'],
+    agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
     pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
 
     kepalaKeluarga: '',
     noKtp: '',
+    agama: '',
     namaLengkap: '',
     status: '',
     jk: '',
     pekerjaan: '',
-    penghasilan: ''
+    penghasilan: '',
+    tanggalLahir: '',
+    tempatLahir: '',
+    menu2: false,
 
   }),
 
@@ -159,11 +197,14 @@ export default {
 
       this.kepalaKeluarga = detail.kepala_keluarga;
       this.noKtp = detail.no_ktp;
+      this.agama = detail.agama,
       this.namaLengkap = detail.nama_lengkap;
       this.status = detail.status_warga;
       this.jk = detail.jenis_kelamin;
       this.pekerjaan = detail.pekerjaan;
       this.penghasilan = detail.penghasilan;
+      this.tempatLahir = detail.tempat_lahir;
+      this.tanggalLahir = detail.tanggal_lahir;
     },
 
     async update() {

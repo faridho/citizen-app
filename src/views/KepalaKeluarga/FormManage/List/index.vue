@@ -38,6 +38,12 @@
               :rules="nameRules">
             </v-text-field>
             <v-text-field
+              label="No Kartu Keluarga"
+              type="number"
+              :rules="nameRules"
+              v-model="noKK">
+            </v-text-field>
+            <v-text-field
               label="Telepon"
               type="number"
               v-model="telepon">
@@ -87,6 +93,7 @@ export default {
     items: [],
 
     namaKepalaKeluarga: '',
+    noKK: '',
     telepon: '',
     noRumah: '',
     statusRumah: '',
@@ -120,6 +127,7 @@ export default {
 
       this.namaKepalaKeluarga = detail.nama_kepala_keluarga;
       this.telepon = detail.telepon;
+      this.noKK = detail.no_kk,
       this.noRumah = detail.no_rumah;
       this.statusRumah = detail.status_rumah;
       this.pekerjaan = detail.pekerjaan;
