@@ -34,6 +34,12 @@ const menus = [
     icon: 'mdi-account-edit',
     href: '/temporary',
     title: 'Warga Temporary'
+  },
+  {
+    name: 'document',
+    icon: 'mdi-file',
+    href: '/document',
+    title: 'Permintaan Dokumen'
   }
 ]
 

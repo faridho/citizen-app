@@ -7,6 +7,7 @@ import Warga from '@/views/Warga'
 import RetribusiKebersihan from '@/views/RetribusiKebersihan'
 import RetribusiKeamanan from '@/views/RetribusiKeamanan'
 import Temporary from '@/views/Temporary'
+import Document from '@/views/Document'
 
 Vue.use(Router)
 
@@ -46,6 +47,11 @@ export default new Router({
       path: '/temporary',
       name: 'temporary',
       component: Temporary
+    },
+    {
+      path: '/document',
+      name: 'document',
+      component: Document
     },
   ]
 })
