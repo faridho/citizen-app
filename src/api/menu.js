@@ -40,6 +40,12 @@ const menus = [
     icon: 'mdi-file',
     href: '/document',
     title: 'Permintaan Dokumen'
+  },
+  {
+    name: 'pengumuman',
+    icon: 'mdi-speaker',
+    href: '/pengumuman',
+    title: 'Daftar Pengumuman'
   }
 ]
 
