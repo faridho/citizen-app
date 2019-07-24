@@ -1,0 +1,221 @@
+<template>
+  <div>
+    <v-list two-line subheader>
+      <v-subheader inset></v-subheader>
+      <v-list-tile
+        v-for="item in items" :key="item.id"
+        rel="noopener nofollow"
+        ripple
+        @click="detail(item.id, $event.target)"
+        avatar>
+        <v-list-tile-avatar>
+          <v-icon>mdi-calendar mdi-48px </v-icon>
+        </v-list-tile-avatar>
+
+        <v-list-tile-content>
+          <v-list-tile-title>{{ item.tgl_siskamling }}</v-list-tile-title>
+          <v-list-tile-sub-title><strong>Jam: </strong> {{ item.jam_mulai }} - {{ item.jam_berakhir }}</v-list-tile-sub-title>
+        </v-list-tile-content>
+        <v-list-tile-action>
+          <v-icon color="warning">mdi-file-document-edit</v-icon>
+        </v-list-tile-action>
+      </v-list-tile>
+    </v-list>
+    <v-dialog
+      v-model="dialog"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition">
+      <v-card>
+        <v-card-title>
+          <h3>Detail JadwaL Siskamling</h3>
+        </v-card-title>
+        <v-card-text>
+          <v-list two-line subheader>
+            <v-subheader inset></v-subheader>
+            <v-list-tile
+              v-for="detail in detailSiskamling" :key="detail.id"
+              rel="noopener nofollow"
+              ripple
+              @click="edit(detail.id, $event.target)"
+              avatar>
+              <v-list-tile-avatar>
+                <v-icon>mdi-account mdi-48px </v-icon>
+              </v-list-tile-avatar>
+
+              <v-list-tile-content>
+                <v-list-tile-title>{{ detail.nama_lengkap }}</v-list-tile-title>
+                <v-list-tile-sub-title><strong>Status: </strong> {{ detail.status_warga }}</v-list-tile-sub-title>
+              </v-list-tile-content>
+              <v-list-tile-action>
+                <v-icon color="warning">mdi-more</v-icon>
+              </v-list-tile-action>
+            </v-list-tile>
+          </v-list>
+          <v-form v-model="valid" ref="form" lazy-validation>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="warning"
+              flat
+              outline
+              class="text-lg-right"
+              @click="newdata">
+              <v-icon>mdi-account-plus</v-icon>
+              Tambah Personel
+            </v-btn>
+            <v-divider></v-divider>
+            <v-layout wrap row v-for="(w, index) in dataWarga" :key="index">
+              <v-flex xs12>
+
+                <v-autocomplete
+                  v-model="w.warga"
+                  :items="Personelist"
+                  :rules="nameRules"
+                  label="Pilih Personel">
+                </v-autocomplete>
+
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="error"
+                  flat
+                  outline
+                  class="text-lg-right"
+                  @click="removedata(index)">
+                  <v-icon>mdi-close-box</v-icon>
+                  Hapus Kolom
+                </v-btn>
+
+              </v-flex>
+              <v-flex xs12>
+                <v-divider></v-divider>
+              </v-flex>
+            </v-layout>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn block flat color="warning" outline @click="close">Batal</v-btn>
+          <v-btn :loading="loading" block color="warning" @click="update">Update</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
+</template>
+<script>
+import eventBus from '@/views/eventBus'
+import URL from '@/api/url'
+import axios from 'axios'
+
+export default {
+  data: () => ({
+    valid: true,
+    dialog: false,
+    loading: false,
+
+    items: [],
+    nameRules: [v => !!v || "Kolom wajib diisi"],
+    dataWarga: [],
+    Personelist: [],
+    detailSiskamling: [],
+
+    id: '',
+
+  }),
+
+  mounted() {
+    this.getData();
+    this.getPersonel();
+    eventBus.$on('DATA_LOADED', this.getData);
+  },
+
+  methods: {
+    async getPersonel() {
+      const data = await axios
+        .get(URL + '/master/datawarga')
+        .then(response => response.data.data);
+
+      const newList = [];
+      for (const item of data) {
+        let element = {
+          value: item.id,
+          text: item.nama_lengkap
+        }
+
+        newList.push(element);
+      }
+
+      this.Personelist = newList;
+    },
+
+    async getData() {
+      const data = await axios
+        .get(URL + '/siskamling/get')
+        .then(response => response.data.data);
+
+      this.items = data;
+    },
+
+    newdata() {
+      this.dataWarga.push({
+        warga: '',
+        statusWarga: 'Siap',
+        alasan: ''
+      });
+    },
+
+    removedata(index) {
+      this.dataWarga.splice(index, 1);
+    },
+
+    async detail(target) {
+      this.dialog = true;
+
+      const data = await axios
+        .get(URL + '/siskamling/get/' + target)
+        .then(response => response.data.data);
+      
+      const { id } = await axios
+        .get(URL + '/siskamling/getsiskamling/' + target)
+        .then(response => response.data.data);
+
+      this.detailSiskamling = data;
+      this.id = id;
+    },
+
+    async edit(target) {
+
+    },
+
+    async update() {
+      this.loading = true;
+      const payload = {
+        idSiskamling: this.id,
+        dataWarga: this.dataWarga
+      }
+
+      try {
+        const storing = await axios
+          .post(URL + '/siskamling/insertDetail', payload, undefined)
+          .then(response => response.data);
+
+        if (storing.status === true) {
+          this.dialog = false;
+          this.loading = false;
+          eventBus.$emit('DATA_LOADED');
+          this.$snackbar(storing.message);
+        } else {
+          this.loading = false;
+          this.$snackbar(storing.message);
+        }
+
+      } catch (error) {
+        this.loading = false;
+        this.$snackbar(storing.message);
+      }
+    },
+
+    close() {
+      this.dialog = false;
+    }
+  }
+}
+</script>

@@ -9,6 +9,7 @@ import RetribusiKeamanan from '@/views/RetribusiKeamanan'
 import Temporary from '@/views/Temporary'
 import Document from '@/views/Document'
 import Pengumuman from '@/views/Pengumuman'
+import Siskamling from '@/views/Siskamling'
 
 Vue.use(Router)
 
@@ -58,6 +59,11 @@ export default new Router({
       path: '/pengumuman',
       name: 'pengumuman',
       component: Pengumuman
+    },
+    {
+      path: '/siskamling',
+      name: 'siskamling',
+      component: Siskamling
     },
   ]
 })

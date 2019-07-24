@@ -46,6 +46,12 @@ const menus = [
     icon: 'mdi-speaker',
     href: '/pengumuman',
     title: 'Daftar Pengumuman'
+  },
+  {
+    name: 'siskamling',
+    icon: 'mdi-security',
+    href: '/siskamling',
+    title: 'Siskamling'
   }
 ]
 
