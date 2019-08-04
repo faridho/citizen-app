@@ -15,6 +15,7 @@ import Register from '@/views/Register'
 Vue.use(Router)
 
 export default new Router({
+  //MASTER LEADER
   routes: [
     {
       path: '/',
