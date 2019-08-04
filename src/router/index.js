@@ -10,6 +10,7 @@ import Temporary from '@/views/Temporary'
 import Document from '@/views/Document'
 import Pengumuman from '@/views/Pengumuman'
 import Siskamling from '@/views/Siskamling'
+import Register from '@/views/Register'
 
 Vue.use(Router)
 
@@ -64,6 +65,11 @@ export default new Router({
       path: '/siskamling',
       name: 'siskamling',
       component: Siskamling
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: Register
     },
   ]
 })
