@@ -48,53 +48,44 @@
                 <v-list-tile-sub-title><strong>Status: </strong> {{ detail.status_warga }}</v-list-tile-sub-title>
               </v-list-tile-content>
               <v-list-tile-action>
-                <v-icon color="warning">mdi-more</v-icon>
+                <v-icon v-if="detail.id == user" color="warning">mdi-more</v-icon>
               </v-list-tile-action>
             </v-list-tile>
           </v-list>
-          <v-form v-model="valid" ref="form" lazy-validation>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="warning"
-              flat
-              outline
-              class="text-lg-right"
-              @click="newdata">
-              <v-icon>mdi-account-plus</v-icon>
-              Tambah Personel
-            </v-btn>
-            <v-divider></v-divider>
-            <v-layout wrap row v-for="(w, index) in dataWarga" :key="index">
-              <v-flex xs12>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn block flat color="warning" outline @click="close">Kembali</v-btn>
+          <v-btn block color="warning" @click="report">Laporan</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
-                <v-autocomplete
-                  v-model="w.warga"
-                  :items="Personelist"
-                  :rules="nameRules"
-                  label="Pilih Personel">
-                </v-autocomplete>
-
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="error"
-                  flat
-                  outline
-                  class="text-lg-right"
-                  @click="removedata(index)">
-                  <v-icon>mdi-close-box</v-icon>
-                  Hapus Kolom
-                </v-btn>
-
-              </v-flex>
-              <v-flex xs12>
-                <v-divider></v-divider>
-              </v-flex>
-            </v-layout>
+    <v-dialog
+      v-model="dialogReport"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition">
+      <v-card>
+        <v-card-title>
+          <h3>Laporan Siskamling</h3>
+        </v-card-title>
+        <v-card-text>
+          <v-form>
+    
+            <v-select
+              :items="reportStatus"
+              label="Status"
+            >
+            </v-select>
+            <v-textarea
+              label="Isi Laporan">
+            </v-textarea>
+            
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn block flat color="warning" outline @click="close">Batal</v-btn>
-          <v-btn :loading="loading" block color="warning" @click="update">Update</v-btn>
+          <v-btn block flat color="warning" outline @click="closeReport">Kembali</v-btn>
+          <v-btn :loading="loading" block color="warning" @click="simpan">Simpan</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -104,22 +95,29 @@
 import eventBus from '@/views/eventBus'
 import URL from '@/api/url'
 import axios from 'axios'
+import VueCookies from 'vue-cookies'
 
 export default {
-  data: () => ({
-    valid: true,
-    dialog: false,
-    loading: false,
+  data() {
+    const user = VueCookies.get('session');
+    return {
+        user: user.id,
+        valid: true,
+        dialog: false,
+        dialogReport: false,
+        loading: false,
 
-    items: [],
-    nameRules: [v => !!v || "Kolom wajib diisi"],
-    dataWarga: [],
-    Personelist: [],
-    detailSiskamling: [],
+        items: [],
+        nameRules: [v => !!v || "Kolom wajib diisi"],
+        dataWarga: [],
+        Personelist: [],
+        detailSiskamling: [],
 
-    id: '',
+        id: '',
 
-  }),
+        reportStatus: ['Aman', 'Tidak Aman']
+    } 
+  },
 
   mounted() {
     this.getData();
@@ -182,35 +180,20 @@ export default {
     },
 
     async edit(target) {
-
+      if(target == this.user) {
+        this.$snackbar("Update Ketersediaan Ronda 'SIAP'");
+      }else {
+        this.$snackbar("Bukan Profil Anda");
+      }
+      
     },
 
-    async update() {
-      this.loading = true;
-      const payload = {
-        idSiskamling: this.id,
-        dataWarga: this.dataWarga
-      }
+    async report() {
+      this.dialogReport = true;
+    },
 
-      try {
-        const storing = await axios
-          .post(URL + '/siskamling/insertDetail', payload, undefined)
-          .then(response => response.data);
-
-        if (storing.status === true) {
-          this.dialog = false;
-          this.loading = false;
-          eventBus.$emit('DATA_LOADED');
-          this.$snackbar(storing.message);
-        } else {
-          this.loading = false;
-          this.$snackbar(storing.message);
-        }
-
-      } catch (error) {
-        this.loading = false;
-        this.$snackbar(storing.message);
-      }
+    closeReport() {
+      this.dialogReport = false;
     },
 
     close() {

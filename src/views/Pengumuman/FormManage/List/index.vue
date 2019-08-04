@@ -28,7 +28,7 @@
       transition="dialog-bottom-transition">
       <v-card>
         <v-card-title>
-          <h3>Detail Permintaan Dokumen</h3>
+          <h3>Detail Isi Pengumuman</h3>
         </v-card-title>
         <v-card-text>
           <v-list two-line>
@@ -39,7 +39,7 @@
               </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-sub-title>Judul Pengumuman</v-list-tile-sub-title>
-                <v-list-tile-title>{{ judulPengumuman }}</v-list-tile-title>
+                {{ judulPengumuman }}
               </v-list-tile-content>
             </v-list-tile>
 
@@ -49,7 +49,7 @@
               </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-sub-title>Isi Pengumuman</v-list-tile-sub-title>
-                <v-list-tile-title>{{ isiPengumuman }}</v-list-tile-title>
+                {{ isiPengumuman }}
               </v-list-tile-content>
             </v-list-tile>
 

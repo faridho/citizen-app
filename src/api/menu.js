@@ -15,7 +15,7 @@ const menus = [
     name: 'warga',
     icon: 'mdi-account-group',
     href: '/warga',
-    title: 'Data Warga'
+    title: 'Data Keluarga'
   },
   {
     name: 'retribusiKebersihan',

@@ -46,7 +46,7 @@
               </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-sub-title>Jenis Dokumen</v-list-tile-sub-title>
-                <v-list-tile-title>{{ jenisDokumen }}</v-list-tile-title>
+                {{ jenisDokumen }}
               </v-list-tile-content>
             </v-list-tile>
 
@@ -66,7 +66,7 @@
               </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-sub-title>Keperluan</v-list-tile-sub-title>
-                <v-list-tile-title>{{ keperluan }}</v-list-tile-title>
+                {{ keperluan }}
               </v-list-tile-content>
             </v-list-tile>
 
