@@ -70,21 +70,26 @@ import months from '@/views/list'
 import eventBus from '@/views/eventBus'
 import URL from '@/api/url'
 import axios from 'axios'
+import VueCookies from 'vue-cookies'
 
 export default {
-  data: () => ({
-    dialog: false,
-    items: [],
+  data() {
+    const user = VueCookies.get('session');
+    return {
+      dialog: false,
+      items: [],
 
-    KKList: [],
-    kepalaKeluarga: '',
-    monthList: months,
-    bulan: '',
-    yearList: [2019, 2020, 2021, 2022, 2023, 2013],
-    tahun: '',
-    nominal: 0,
+      KKList: [],
 
-  }),
+      id: user.id,
+      kepalaKeluarga: '',
+      monthList: months,
+      bulan: '',
+      yearList: [2019, 2020, 2021, 2022, 2023, 2013],
+      tahun: '',
+      nominal: 0,
+    }
+  },
 
   mounted() {
     this.getData();
@@ -95,7 +100,7 @@ export default {
   methods: {
     async getKK() {
       const data = await axios
-        .get(URL + '/master/datakepalakeluarga')
+        .get(URL + '/master/alldatakepalakeluarga/' + this.id)
         .then(response => response.data.data);
 
       const newList = [];
@@ -113,7 +118,7 @@ export default {
 
     async getData() {
       const result = await axios
-        .get(URL + '/retribusi/keamanan')
+        .get(URL + '/retribusi/allkeamanan/' + this.id)
         .then(response => response.data.data);
 
       this.items = result;

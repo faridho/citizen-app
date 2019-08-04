@@ -93,22 +93,27 @@
 import eventBus from '@/views/eventBus'
 import URL from '@/api/url'
 import axios from 'axios'
+import VueCookies from 'vue-cookies'
 
 export default {
   props: {
     tab: Number
   },
 
-  data: () => ({
-    dialog: false,
-    items: [],
+  data() {
+    const user = VueCookies.get('session');
+    return {
+      dialog: false,
+      items: [],
 
-    namaLengkap: '',
-    jenisDokumen: '',
-    tanggalPermintaan: '',
-    keperluan: '',
-    biaya: '',
-  }),
+      id: user.id,
+      namaLengkap: '',
+      jenisDokumen: '',
+      tanggalPermintaan: '',
+      keperluan: '',
+      biaya: '',
+    }
+  },
 
   mounted() {
     this.getData();
@@ -118,7 +123,7 @@ export default {
   methods: {
     async getData() {
       const data = await axios
-        .get(URL + '/document/getall/' + this.tab)
+        .get(URL + '/document/getllmaster/' + this.tab + '/' + this.id)
         .then(response => response.data.data);
 
       this.items = data;

@@ -38,6 +38,12 @@
               :rules="nameRules">
             </v-text-field>
             <v-text-field
+              label="Password"
+              v-model="password"
+              type="password"
+              :rules="nameRules">
+            </v-text-field>
+            <v-text-field
               label="No Kartu Keluarga"
               type="number"
               :rules="nameRules"
@@ -83,26 +89,32 @@
 import eventBus from '@/views/eventBus'
 import URL from '@/api/url'
 import axios from 'axios'
+import VueCookies from 'vue-cookies'
 
 export default {
-  data: () => ({
-    valid: true,
-    dialog: false,
-    loading: false,
+  data() {
+    const user = VueCookies.get('session');
+    return {
+      valid: true,
+      dialog: false,
+      loading: false,
 
-    items: [],
+      items: [],
 
-    namaKepalaKeluarga: '',
-    noKK: '',
-    telepon: '',
-    noRumah: '',
-    statusRumah: '',
-    statusRumahList: ['Milik Sendiri', 'Kontrak', 'Numpang', 'Kost'],
-    pekerjaan: '',
-    penghasilan: 0,
+      id: user.id,
+      namaKepalaKeluarga: '',
+      noKK: '',
+      telepon: '',
+      noRumah: '',
+      statusRumah: '',
+      statusRumahList: ['Milik Sendiri', 'Kontrak', 'Numpang', 'Kost'],
+      pekerjaan: '',
+      penghasilan: 0,
+      password: '',
 
-    nameRules: [v => !!v || "Kolom wajib diisi"],
-  }),
+      nameRules: [v => !!v || "Kolom wajib diisi"]
+    }
+  },
 
   mounted() {
     this.getData();
@@ -112,7 +124,7 @@ export default {
   methods: {
     async getData() {
       const result = await axios
-        .get(URL + '/master/datakepalakeluarga')
+        .get(URL + '/master/alldatakepalakeluarga/' + this.id)
         .then(response => response.data.data);
 
       this.items = result;

@@ -24,7 +24,7 @@
         </v-navigation-drawer>
         <v-toolbar color="warning" light extended>
           <v-toolbar-side-icon class="white--text" @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-          <v-toolbar-title class="white--text">Daftar Warga</v-toolbar-title>
+          <v-toolbar-title class="white--text">Daftar Keluarga</v-toolbar-title>
           <v-btn
             fab
             color="grey lighten-5"
@@ -180,33 +180,38 @@ import axios from 'axios'
 import Vue from 'vue'
 import money from 'v-money'
 import MasterList from './List'
+import VueCookies from 'vue-cookies'
 
 Vue.use(money, { precision: 4 })
 export default {
-  data: vm => ({
-    valid: true,
-    drawer: null,
-    dialog: false,
-    loading: false,
+  data() {
+      const user = VueCookies.get('session');
+      return {
+        valid: true,
+        drawer: null,
+        dialog: false,
+        loading: false,
 
-    menus: menus,
-    dataWarga: [],
-    nameRules: [v => !!v || "Kolom wajib diisi"],
-    KKList: [],
-    statusList: ['Ayah', 'Ibu', 'Anak'],
-    agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
-    radio: 1,
-    pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
-    money: {
-      decimal: '.',
-      thousands: ',',
-      prefix: '',
-      suffix: '',
-      precision: '',
-      masked: false /* doesn't work with directive */
-    },
+        menus: menus,
 
-  }),
+        id: user.id,
+        dataWarga: [],
+        nameRules: [v => !!v || "Kolom wajib diisi"],
+        KKList: [],
+        statusList: ['Ayah', 'Ibu', 'Anak'],
+        agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
+        radio: 1,
+        pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
+        money: {
+          decimal: '.',
+          thousands: ',',
+          prefix: '',
+          suffix: '',
+          precision: '',
+          masked: false /* doesn't work with directive */
+        },
+    }
+  },
 
   mounted() {
     this.getKK();
@@ -215,7 +220,7 @@ export default {
   methods: {
     async getKK() {
       const data = await axios
-        .get(URL + '/master/datakepalakeluarga')
+        .get(URL + '/master/alldatakepalakeluarga/' + this.id)
         .then(response => response.data.data);
 
       const newList = [];

@@ -126,34 +126,37 @@
 import eventBus from '@/views/eventBus'
 import URL from '@/api/url'
 import axios from 'axios'
-
+import VueCookies from 'vue-cookies'
 export default {
-  data: () => ({
-    valid: true,
-    dialog: false,
-    loading: false,
+  data() {
+    const user = VueCookies.get('session');
+    return {
+      valid: true,
+      dialog: false,
+      loading: false,
 
-    items: [],
-    nameRules: [v => !!v || "Kolom wajib diisi"],
+      items: [],
+      nameRules: [v => !!v || "Kolom wajib diisi"],
 
-    KKList: [],
-    statusList: ['Ayah', 'Ibu', 'Anak'],
-    agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
-    pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
+      id: user.id,
+      KKList: [],
+      statusList: ['Ayah', 'Ibu', 'Anak'],
+      agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
+      pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
 
-    kepalaKeluarga: '',
-    noKtp: '',
-    agama: '',
-    namaLengkap: '',
-    status: '',
-    jk: '',
-    pekerjaan: '',
-    penghasilan: '',
-    tanggalLahir: '',
-    tempatLahir: '',
-    menu2: false,
-
-  }),
+      kepalaKeluarga: '',
+      noKtp: '',
+      agama: '',
+      namaLengkap: '',
+      status: '',
+      jk: '',
+      pekerjaan: '',
+      penghasilan: '',
+      tanggalLahir: '',
+      tempatLahir: '',
+      menu2: false,
+    }
+  },
 
   mounted() {
     this.getData();
@@ -164,7 +167,7 @@ export default {
   methods: {
     async getData() {
       const result = await axios
-        .get(URL + '/master/datawarga')
+        .get(URL + '/master/alldatawarga/' + this.id)
         .then(response => response.data.data);
 
       this.items = result;

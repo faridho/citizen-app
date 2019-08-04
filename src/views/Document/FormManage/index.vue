@@ -103,46 +103,50 @@ import axios from 'axios'
 import Vue from 'vue'
 import money from 'v-money'
 import MasterList from './List'
+import VueCookies from 'vue-cookies'
 
 Vue.use(money, { precision: 4 })
 export default {
-  data: vm => ({
-    valid: true,
-    drawer: null,
-    dialog: false,
-    loading: false,
+  data() {
+    const user = VueCookies.get('session');
+    return {
+      valid: true,
+      drawer: null,
+      dialog: false,
+      loading: false,
 
-    menus: menus,
-    nameRules: [v => !!v || "Kolom wajib diisi"],
-    wargaList: [],
-    jenisWargaList: [
-      {
-        text: 'Warga Pribumi',
-        value: 1
+      menus: menus,
+      nameRules: [v => !!v || "Kolom wajib diisi"],
+      wargaList: [],
+      jenisWargaList: [
+        {
+          text: 'Warga Pribumi',
+          value: 1
+        },
+        {
+          text: 'Warga Temporary',
+          value: 2
+        }
+      ],
+      documentTypes: documentTypes,
+
+      id: user.id,
+      jenisWarga: '',
+      warga: '',
+      documentType: '',
+      keperluan: '',
+      biaya: 0,
+
+      money: {
+        decimal: '.',
+        thousands: ',',
+        prefix: '',
+        suffix: '',
+        precision: '',
+        masked: false 
       },
-      {
-        text: 'Warga Temporary',
-        value: 2
-      }
-    ],
-    documentTypes: documentTypes,
-
-    jenisWarga: '',
-    warga: '',
-    documentType: '',
-    keperluan: '',
-    biaya: 0,
-
-    money: {
-      decimal: '.',
-      thousands: ',',
-      prefix: '',
-      suffix: '',
-      precision: '',
-      masked: false 
-    },
-
-  }),
+    }
+  },
 
 
   methods: {
@@ -152,9 +156,9 @@ export default {
 
     async getWarga(id) {
       if (id === 1) {
-        var endPoint = '/master/datawarga';
+        var endPoint = '/master/alldatawarga/' + this.id;
       } else {
-        var endPoint = '/temporary/get';
+        var endPoint = '/temporary/getall/' + this.id;
       }
 
       const data = await axios

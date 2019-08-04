@@ -183,62 +183,67 @@ import axios from 'axios'
 import Vue from 'vue'
 import money from 'v-money'
 import MasterList from './List'
+import VueCookies from 'vue-cookies'
 
 Vue.use(money, { precision: 4 })
 export default {
-  data: () => ({
-    valid: true,
-    drawer: null,
-    dialog: false,
-    loading: false,
+  data() {
+    const user = VueCookies.get('session');
+    return {
+      valid: true,
+      drawer: null,
+      dialog: false,
+      loading: false,
 
-    menus: menus,
-    dataWarga: [],
-    nameRules: [v => !!v || "Kolom wajib diisi"],
-    KKList: [],
-    jkList: [
-      {
-        text: 'Laki-Laki',
-        value: 1
+      menus: menus,
+
+      id: user.id,
+      dataWarga: [],
+      nameRules: [v => !!v || "Kolom wajib diisi"],
+      KKList: [],
+      jkList: [
+        {
+          text: 'Laki-Laki',
+          value: 1
+        },
+        {
+          text: 'Perempuan',
+          value: 2
+        }
+      ],
+      pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
+      countries: countries,
+      agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
+      jenisIdentitasList: ['KTP', 'KITAS', 'Passport'],
+      types: ['Kost', 'Kontrakan', 'Milik Saudara'],
+
+      money: {
+        decimal: '.',
+        thousands: ',',
+        prefix: '',
+        suffix: '',
+        precision: '',
+        masked: false /* doesn't work with directive */
       },
-      {
-        text: 'Perempuan',
-        value: 2
-      }
-    ],
-    pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
-    countries: countries,
-    agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
-    jenisIdentitasList: ['KTP', 'KITAS', 'Passport'],
-    types: ['Kost', 'Kontrakan', 'Milik Saudara'],
 
-    money: {
-      decimal: '.',
-      thousands: ',',
-      prefix: '',
-      suffix: '',
-      precision: '',
-      masked: false /* doesn't work with directive */
-    },
-
-    nama: '',
-    jk: '',
-    agama: '',
-    noTelp: '',
-    identitas: '',
-    jenisIdentitas: '',
-    kewarganegaraan: '',
-    alamat: '',
-    pemilikTempat: '',
-    tipeSewa: '',
-    hargaSewa: 0,
-    pekerjaan: '',
-    tempatLahir: '',
-    tanggalLahir: '',
-    menu2: false,
-    kotaAsal: ''
-
-  }),
+      nama: '',
+      jk: '',
+      agama: '',
+      noTelp: '',
+      identitas: '',
+      jenisIdentitas: '',
+      kewarganegaraan: '',
+      alamat: '',
+      pemilikTempat: '',
+      tipeSewa: '',
+      hargaSewa: 0,
+      pekerjaan: '',
+      tempatLahir: '',
+      tanggalLahir: '',
+      menu2: false,
+      kotaAsal: ''
+    }
+  },
 
   mounted() {
     this.getKK();
@@ -247,7 +252,7 @@ export default {
   methods: {
     async getKK() {
       const data = await axios
-        .get(URL + '/master/datakepalakeluarga')
+        .get(URL + '/master/alldatakepalakeluarga/' + this.id)
         .then(response => response.data.data);
 
       const newList = [];
@@ -275,6 +280,7 @@ export default {
           jenisKelamin: parseInt(this.jk),
           tanggalLahir: this.tanggalLahir,
           tempatLahir: this.tempatLahir,
+          agama: this.agama,
           noTelp: parseInt(this.noTelp),
           identitas: this.identitas,
           jenisIdentitas: this.jenisIdentitas,

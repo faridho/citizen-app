@@ -159,51 +159,55 @@ import countries from '../config'
 import eventBus from '@/views/eventBus'
 import URL from '@/api/url'
 import axios from 'axios'
+import VueCookies from 'vue-cookies'
 
 export default {
-  data: () => ({
-    valid: true,
-    dialog: false,
-    loading: false,
+  data() {
+    const user = VueCookies.get('session');
+    return {
+      valid: true,
+      dialog: false,
+      loading: false,
 
-    items: [],
-    nameRules: [v => !!v || "Kolom wajib diisi"],
+      items: [],
+      nameRules: [v => !!v || "Kolom wajib diisi"],
 
-    KKList: [],
-    jkList: [
-      {
-        text: 'Laki-Laki',
-        value: 1
-      },
-      {
-        text: 'Perempuan',
-        value: 2
-      }
-    ],
-    pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
-    countries: countries,
-    agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
-    jenisIdentitasList: ['KTP', 'KITAS', 'Passport'],
-    types: ['Kost', 'Kontrakan', 'Milik Saudara'],
+      id: user.id,
+      KKList: [],
+      jkList: [
+        {
+          text: 'Laki-Laki',
+          value: 1
+        },
+        {
+          text: 'Perempuan',
+          value: 2
+        }
+      ],
+      pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
+      countries: countries,
+      agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
+      jenisIdentitasList: ['KTP', 'KITAS', 'Passport'],
+      types: ['Kost', 'Kontrakan', 'Milik Saudara'],
 
-    nama: '',
-    jk: '',
-    agama: '',
-    noTelp: '',
-    identitas: '',
-    jenisIdentitas: '',
-    kewarganegaraan: '',
-    alamat: '',
-    pemilikTempat: '',
-    tipeSewa: '',
-    hargaSewa: 0,
-    pekerjaan: '',
-    tempatLahir: '',
-    tanggalLahir: '',
-    menu2: false,
-    kotaAsal: ''
-
-  }),
+      nama: '',
+      jk: '',
+      agama: '',
+      noTelp: '',
+      identitas: '',
+      jenisIdentitas: '',
+      kewarganegaraan: '',
+      alamat: '',
+      pemilikTempat: '',
+      tipeSewa: '',
+      hargaSewa: 0,
+      pekerjaan: '',
+      tempatLahir: '',
+      tanggalLahir: '',
+      menu2: false,
+      kotaAsal: ''
+    }
+  },
 
   mounted() {
     this.getData();
@@ -214,7 +218,7 @@ export default {
   methods: {
     async getData() {
       const result = await axios
-        .get(URL + '/temporary/get')
+        .get(URL + '/temporary/getall/' + this.id)
         .then(response => response.data.data);
 
       this.items = result;
@@ -222,7 +226,7 @@ export default {
 
     async getKK() {
       const data = await axios
-        .get(URL + '/master/datakepalakeluarga')
+        .get(URL + '/master/alldatakepalakeluarga/' + this.id)
         .then(response => response.data.data);
 
       const newList = [];

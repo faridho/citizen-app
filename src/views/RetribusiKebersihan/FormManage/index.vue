@@ -98,34 +98,40 @@ import axios from 'axios'
 import Vue from 'vue'
 import money from 'v-money'
 import MasterList from './List'
+import VueCookies from 'vue-cookies'
 
 Vue.use(money, { precision: 4 })
 export default {
-  data: () => ({
-    valid: true,
-    drawer: null,
-    dialog: false,
-    loading: false,
+  data() {
+    const user = VueCookies.get('session');
+    return {
+      valid: true,
+      drawer: null,
+      dialog: false,
+      loading: false,
 
-    menus: menus,
-    nameRules: [v => !!v || "Kolom wajib diisi"],
-    KKList: [],
-    kepalaKeluarga: '',
-    monthList: months,
-    bulan: '',
-    yearList: [2019, 2020, 2021, 2022, 2023, 2013],
-    tahun: '',
-    nominal: 0,
+      menus: menus,
 
-    money: {
-      decimal: '.',
-      thousands: ',',
-      prefix: '',
-      suffix: '',
-      precision: '',
-      masked: false /* doesn't work with directive */
+      id: user.id,
+      nameRules: [v => !!v || "Kolom wajib diisi"],
+      KKList: [],
+      kepalaKeluarga: '',
+      monthList: months,
+      bulan: '',
+      yearList: [2019, 2020, 2021, 2022, 2023, 2013],
+      tahun: '',
+      nominal: 0,
+
+      money: {
+        decimal: '.',
+        thousands: ',',
+        prefix: '',
+        suffix: '',
+        precision: '',
+        masked: false /* doesn't work with directive */
+      }
     }
-  }),
+  },
 
   mounted() {
     this.getKK();
@@ -134,7 +140,7 @@ export default {
   methods: {
     async getKK() {
       const data = await axios
-        .get(URL + '/master/datakepalakeluarga')
+        .get(URL + '/master/alldatakepalakeluarga/' + this.id)
         .then(response => response.data.data);
 
       const newList = [];
