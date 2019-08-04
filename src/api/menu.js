@@ -41,6 +41,12 @@ const menus = [
     href: '/siskamling',
     title: 'Daftar Siskamling'
   },
+  {
+    name: 'lpj',
+    icon: 'mdi-file-document-box-check',
+    href: '/lpj',
+    title: 'LPJ Dana'
+  },
 ]
 
 export default menus;

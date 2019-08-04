@@ -8,6 +8,7 @@ import RetribusiKebersihan from '@/views/Dashboard/RetribusiKebersihan'
 import RetribusiKeamanan from '@/views/Dashboard/RetribusiKeamanan'
 import Document from '@/views/Dashboard/Document'
 import Siskamling from '@/views/Dashboard/Siskamling'
+import LPJ from '@/views/Dashboard/LPJ'
 
 Vue.use(Router)
 
@@ -52,6 +53,11 @@ export default new Router({
       path: '/siskamling',
       name: 'siskmaling',
       component: Siskamling
+    },
+    {
+      path: '/lpj',
+      name: 'lpj',
+      component: LPJ
     },
   ]
 })
