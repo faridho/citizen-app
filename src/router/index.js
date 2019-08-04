@@ -11,6 +11,7 @@ import Document from '@/views/Document'
 import Pengumuman from '@/views/Pengumuman'
 import Siskamling from '@/views/Siskamling'
 import Register from '@/views/Register'
+import LPJ from '@/views/LPJ'
 
 Vue.use(Router)
 
@@ -71,6 +72,11 @@ export default new Router({
       path: '/register',
       name: 'register',
       component: Register
+    },
+    {
+      path: '/lpj',
+      name: 'lpj',
+      component: LPJ
     },
   ]
 })

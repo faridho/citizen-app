@@ -52,6 +52,12 @@ const menus = [
     icon: 'mdi-security',
     href: '/siskamling',
     title: 'Siskamling'
+  },
+  {
+    name: 'lpj',
+    icon: 'mdi-file-replace',
+    href: '/lpj',
+    title: 'LPJ Dana'
   }
 ]
 

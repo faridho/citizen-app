@@ -9,12 +9,11 @@
         @click="detail(item.id, $event.target)"
         avatar>
         <v-list-tile-avatar>
-          <v-icon>mdi-speaker mdi-48px </v-icon>
+          <v-icon>mdi-file-restore mdi-48px </v-icon>
         </v-list-tile-avatar>
 
         <v-list-tile-content>
-          <v-list-tile-title>{{ item.judul_pengumuman }}</v-list-tile-title>
-          <v-list-tile-sub-title><strong>Tanggal: </strong> {{ item.tgl_pengumuman }}</v-list-tile-sub-title>
+          <v-list-tile-title>{{ item.tgl_keluar }}</v-list-tile-title>
         </v-list-tile-content>
         <v-list-tile-action>
           <v-icon color="warning">mdi-eye-check</v-icon>
@@ -28,7 +27,7 @@
       transition="dialog-bottom-transition">
       <v-card>
         <v-card-title>
-          <h3>Detail Permintaan Dokumen</h3>
+          <h3>Detail Pengeluaran</h3>
         </v-card-title>
         <v-card-text>
           <v-list two-line>
@@ -38,8 +37,8 @@
                 <v-icon color="indigo">mdi-file</v-icon>
               </v-list-tile-action>
               <v-list-tile-content>
-                <v-list-tile-sub-title>Judul Pengumuman</v-list-tile-sub-title>
-                {{ judulPengumuman }}
+                <v-list-tile-sub-title>Jumlah Pengeluaran</v-list-tile-sub-title>
+                {{ jumlahPengeluaran }}
               </v-list-tile-content>
             </v-list-tile>
 
@@ -48,8 +47,18 @@
                 <v-icon color="indigo">mdi-locker-multiple</v-icon>
               </v-list-tile-action>
               <v-list-tile-content>
-                <v-list-tile-sub-title>Isi Pengumuman</v-list-tile-sub-title>
-                {{ isiPengumuman }}
+                <v-list-tile-sub-title>Keterangan</v-list-tile-sub-title>
+                {{ keterangan }}
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile>
+              <v-list-tile-action>
+                <v-icon color="indigo">mdi-calendar</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-sub-title>Tgl Keluar</v-list-tile-sub-title>
+                {{ tglKeluar }}
               </v-list-tile-content>
             </v-list-tile>
 
@@ -71,15 +80,23 @@ import axios from 'axios'
 export default {
   data: () => ({
     dialog: false,
-    items: [],
+    items: [
+      {
+        "id": 1,
+        "jumlah_pengeluaran": 200000,
+        "keterangan": "PerbaikanPortal",
+        "tgl_keluar": "2019-08-04"
+      }
+    ],
 
-    judulPengumuman: '',
-    isiPengumuman: '',
+    jumlahPengeluaran: '',
+    keterangan: '',
+    tglKeluar: ''
 
   }),
 
   mounted() {
-    this.getData();
+    //this.getData();
     eventBus.$on('DATA_LOADED', this.getData);
   },
 
@@ -97,12 +114,13 @@ export default {
     async detail(target) {
       this.dialog = true;
 
-      const detail = await axios
+      /*const detail = await axios
         .get(URL + '/anouncement/get/' + target)
-        .then(response => response.data.data);
+        .then(response => response.data.data);*/
 
-      this.judulPengumuman = detail.judul_pengumuman;
-      this.isiPengumuman = detail.isi_pengumuman;
+      this.jumlahPengeluaran = 200000;
+      this.keterangan = "Perbaikan Portal";
+      this.tglKeluar = "2019-09-04"
     },
 
     close() {

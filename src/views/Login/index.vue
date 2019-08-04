@@ -12,9 +12,9 @@
               <v-card-text>
                 <v-form v-model="valid" ref="form" lazy-validation>
                   <v-text-field 
-                    v-model="kodeWarga" 
+                    v-model="username" 
                     prepend-icon="mdi-account" 
-                    label="Kode Warga"
+                    label="Username"
                     :rules="nameRules"
                   ></v-text-field>
                   <v-text-field 
@@ -27,7 +27,6 @@
                 </v-form>
               </v-card-text>
               <v-card-actions>
-                <v-btn flat color="warning" to="/Register">Register</v-btn>
                 <v-btn color="warning" :loading="loading" @click="login">Login</v-btn>
               </v-card-actions>
             </v-card>
@@ -50,7 +49,7 @@
       valid: true,
       loading: false,
 
-      kodeWarga: '',
+      username: '',
       password: '',
       nameRules: [v => !!v || "Kolom wajib diisi"],
     }),
@@ -69,19 +68,19 @@
         if (this.$refs.form.validate()) {
           this.loading = true;
           const payload = {
-            kodeWarga: this.kodeWarga,
+            username: this.username,
             password: this.password,
           }
 
           const storing = await axios
-            .post(URL + '/auth/login', payload, undefined)
+            .post(URL + '/auth/loginleader', payload, undefined)
             .then(response => response.data);
 
           if (storing.status === true) {
             var session = {
               id: storing.data.id,
-              kodeWarga: storing.data.kode_warga,
-              nama_kepala_keluarga: storing.data.nama_kepala_keluarga,
+              username: storing.data.username,
+              nama_kepala_keluarga: storing.data.nama_lengkap,
             };
 
             this.$cookies.set("session", session, "1w");
