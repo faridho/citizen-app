@@ -30,21 +30,6 @@
           <v-flex xs12>
             <MainTable />
           </v-flex>
-          <v-flex xs6 style="margin-top: 10px;">
-            <ChartGender />
-          </v-flex>
-          <v-flex xs6 style="margin-top: 10px;">
-            <ChartAge />
-          </v-flex>
-          <v-flex xs6 style="margin-top: 10px;">
-            <ChartRevenue />
-          </v-flex>
-          <v-flex xs6 style="margin-top: 10px;">
-            <ChartJob />
-          </v-flex>
-          <v-flex xs12 style="margin-top: 10px;">
-            <ChartReligion />
-          </v-flex>
         </v-layout>
       </v-container>
     </v-content>
@@ -56,12 +41,7 @@
   import menus from '@/api/menu'
   import VueCookies from 'vue-cookies'
   import MainTable from './components/MainTable'
-  import ChartGender from './components/ChartGender'
-  import ChartAge from './components/ChartAge'
-  import ChartRevenue from './components/ChartRevenue'
-  import ChartJob from './components/ChartJob'
-  import ChartReligion from './components/ChartReligion'
-
+  
   export default {
     data() {
       const user = VueCookies.get('session');
@@ -76,11 +56,6 @@
 
     components: {
       MainTable,
-      ChartGender,
-      ChartAge,
-      ChartRevenue,
-      ChartJob,
-      ChartReligion
     }
   }
 </script>

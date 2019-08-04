@@ -37,7 +37,7 @@
             <ChartAge />
           </v-flex>
           <v-flex xs6 style="margin-top: 10px;">
-            <ChartRevenue />
+            <ChartPlace />
           </v-flex>
           <v-flex xs6 style="margin-top: 10px;">
             <ChartJob />
@@ -58,7 +58,7 @@
   import MainTable from './components/MainTable'
   import ChartGender from './components/ChartGender'
   import ChartAge from './components/ChartAge'
-  import ChartRevenue from './components/ChartRevenue'
+  import ChartPlace from './components/ChartPlace'
   import ChartJob from './components/ChartJob'
   import ChartReligion from './components/ChartReligion'
 
@@ -78,7 +78,7 @@
       MainTable,
       ChartGender,
       ChartAge,
-      ChartRevenue,
+      ChartPlace,
       ChartJob,
       ChartReligion
     }
