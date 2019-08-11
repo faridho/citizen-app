@@ -57,29 +57,23 @@
           },
         ],
 
-        items: [
-          {
-            "jumlah_pengeluaran": 200000,
-            "keterangan": "Perbaikan Pintu Portal",
-            "tgl_keluar": "2019-08-03"
-          }
-        ],
+        items: [],
   
       }
     },
 
     mounted() {
-      //this.getData();
+      this.getData();
     },
 
     methods: {
-      /*async getData() {
+      async getData() {
         const result = await axios
-          .get(URL + '/retribusi/kebersihan')
+          .get(URL + '/anggaran/getdanatetap')
           .then(response => response.data.data);
 
         this.items = result;
-      },*/
+      },
     }
   }
 </script>

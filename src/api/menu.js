@@ -47,6 +47,12 @@ const menus = [
     href: '/lpj',
     title: 'LPJ Dana'
   },
+  {
+    name: 'logout',
+    icon: 'mdi-logout',
+    href: '/',
+    title: 'Logout'
+  },
 ]
 
 export default menus;
