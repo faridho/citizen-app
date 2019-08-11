@@ -28,7 +28,7 @@
       transition="dialog-bottom-transition">
       <v-card>
         <v-card-title>
-          <h3>Detail Warga</h3>
+          <h3>Detail Warga Temporary</h3>
         </v-card-title>
         <v-card-text>
           <v-layout>

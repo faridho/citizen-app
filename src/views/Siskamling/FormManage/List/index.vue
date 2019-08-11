@@ -37,7 +37,7 @@
               v-for="detail in detailSiskamling" :key="detail.id"
               rel="noopener nofollow"
               ripple
-              @click="edit(detail.id, $event.target)"
+              @click="edit(detail.id, detail.status_warga)"
               avatar>
               <v-list-tile-avatar>
                 <v-icon>mdi-account mdi-48px </v-icon>
@@ -93,129 +93,218 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn block flat color="warning" outline @click="close">Batal</v-btn>
+          <v-btn flat color="warning" outline @click="close">Batal</v-btn>
           <v-btn :loading="loading" block color="warning" @click="update">Update</v-btn>
+          <v-btn block color="warning" @click="report">Laporan</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="dialogReport"
+      fullscreen
+      hide-overlay
+      transition="dialog-bottom-transition">
+      <v-card>
+        <v-card-title>
+          <h3>Laporan Siskamling</h3>
+        </v-card-title>
+        <v-card-text>
+          <v-form v-model="valid" ref="form" lazy-validation>
+
+            <v-select
+              v-model="statusLaporan"
+              :items="reportStatus"
+              label="Status">
+            </v-select>
+            <v-textarea
+              v-model="isiLaporan"
+              label="Isi Laporan">
+            </v-textarea>
+
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn block flat color="warning" outline @click="closeReport">Kembali</v-btn>
+          <v-btn :loading="loading" block color="warning" @click="simpan">Laporkan</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
 </template>
 <script>
-import eventBus from '@/views/eventBus'
-import URL from '@/api/url'
-import axios from 'axios'
+  import eventBus from '@/views/eventBus'
+  import URL from '@/api/url'
+  import axios from 'axios'
 
-export default {
-  data: () => ({
-    valid: true,
-    dialog: false,
-    loading: false,
+  export default {
+    data: () => ({
+      valid: true,
+      dialog: false,
+      dialogReport: false,
+      loading: false,
 
-    items: [],
-    nameRules: [v => !!v || "Kolom wajib diisi"],
-    dataWarga: [],
-    Personelist: [],
-    detailSiskamling: [],
+      items: [],
+      nameRules: [v => !!v || "Kolom wajib diisi"],
+      dataWarga: [],
+      Personelist: [],
+      detailSiskamling: [],
 
-    id: '',
+      id: '',
 
-  }),
+      reportStatus: ['Aman', 'Tidak Aman'],
 
-  mounted() {
-    this.getData();
-    this.getPersonel();
-    eventBus.$on('DATA_LOADED', this.getData);
-  },
+      idSiskamling: '',
+      statusLaporan: '',
+      isiLaporan: ''
 
-  methods: {
-    async getPersonel() {
-      const data = await axios
-        .get(URL + '/master/datawarga')
-        .then(response => response.data.data);
+    }),
 
-      const newList = [];
-      for (const item of data) {
-        let element = {
-          value: item.id,
-          text: item.nama_lengkap
+    mounted() {
+      this.getData();
+      this.getPersonel();
+      eventBus.$on('DATA_LOADED', this.getData);
+    },
+
+    methods: {
+      async getPersonel() {
+        const data = await axios
+          .get(URL + '/master/datawarga')
+          .then(response => response.data.data);
+
+        const newList = [];
+        for (const item of data) {
+          let element = {
+            value: item.id,
+            text: item.nama_lengkap
+          }
+
+          newList.push(element);
         }
 
-        newList.push(element);
-      }
+        this.Personelist = newList;
+      },
 
-      this.Personelist = newList;
-    },
+      async getData() {
+        const data = await axios
+          .get(URL + '/siskamling/get')
+          .then(response => response.data.data);
 
-    async getData() {
-      const data = await axios
-        .get(URL + '/siskamling/get')
-        .then(response => response.data.data);
+        this.items = data;
+      },
 
-      this.items = data;
-    },
+      newdata() {
+        this.dataWarga.push({
+          warga: '',
+          statusWarga: 'Siap',
+          alasan: ''
+        });
+      },
 
-    newdata() {
-      this.dataWarga.push({
-        warga: '',
-        statusWarga: 'Siap',
-        alasan: ''
-      });
-    },
+      async edit(target, status) {
 
-    removedata(index) {
-      this.dataWarga.splice(index, 1);
-    },
+        const payload = {
+          id: target,
+          status: status
+        };
 
-    async detail(target) {
-      this.dialog = true;
 
-      const data = await axios
-        .get(URL + '/siskamling/get/' + target)
-        .then(response => response.data.data);
-      
-      const { id } = await axios
-        .get(URL + '/siskamling/getsiskamling/' + target)
-        .then(response => response.data.data);
-
-      this.detailSiskamling = data;
-      this.id = id;
-    },
-
-    async edit(target) {
-
-    },
-
-    async update() {
-      this.loading = true;
-      const payload = {
-        idSiskamling: this.id,
-        dataWarga: this.dataWarga
-      }
-
-      try {
-        const storing = await axios
-          .post(URL + '/siskamling/insertDetail', payload, undefined)
+        const store = await axios
+          .post(URL + '/siskamling/updateketersediaan/', payload, undefined)
           .then(response => response.data);
 
-        if (storing.status === true) {
-          this.dialog = false;
-          this.loading = false;
+        if (store.status === true) {
+          this.$snackbar(store.message);
           eventBus.$emit('DATA_LOADED');
-          this.$snackbar(storing.message);
         } else {
+          this.$snackbar(store.message);
+        }
+
+      },
+
+      removedata(index) {
+        this.dataWarga.splice(index, 1);
+      },
+
+      async detail(target) {
+        this.dialog = true;
+
+        const data = await axios
+          .get(URL + '/siskamling/get/' + target)
+          .then(response => response.data.data);
+
+        const { id } = await axios
+          .get(URL + '/siskamling/getsiskamling/' + target)
+          .then(response => response.data.data);
+
+        this.detailSiskamling = data;
+        this.id = id;
+      },
+
+      async update() {
+        this.loading = true;
+        const payload = {
+          idSiskamling: this.id,
+          dataWarga: this.dataWarga
+        }
+
+        try {
+          const storing = await axios
+            .post(URL + '/siskamling/insertDetail', payload, undefined)
+            .then(response => response.data);
+
+          if (storing.status === true) {
+            this.dialog = false;
+            this.loading = false;
+            eventBus.$emit('DATA_LOADED');
+            this.$snackbar(storing.message);
+          } else {
+            this.loading = false;
+            this.$snackbar(storing.message);
+          }
+
+        } catch (error) {
           this.loading = false;
           this.$snackbar(storing.message);
         }
+      },
 
-      } catch (error) {
-        this.loading = false;
-        this.$snackbar(storing.message);
+      async simpan() {
+        if (this.$refs.form.validate()) {
+          this.loading = true;
+
+          const payload = {
+            idSiskamling: this.idSiskamling,
+            statusLaporan: this.statusLaporan,
+            isiLaporan: this.isiLaporan
+          }
+
+          const store = await axios
+            .post(URL + '/siskamling/insertreport', payload, undefined)
+            .then(response => response.data);
+
+          if (store.status === true) {
+            this.$snackbar(store.message);
+            this.loading = false;
+            this.dialogReport = false;
+          } else {
+            this.$snackbar(store.message);
+            this.loading = false;
+          }
+        }
+      },
+
+      report() {
+        this.dialogReport = true;
+      },
+
+      closeReport() {
+        this.dialogReport = false;
+      },
+
+      close() {
+        this.dialog = false;
       }
-    },
-
-    close() {
-      this.dialog = false;
     }
   }
-}
 </script>

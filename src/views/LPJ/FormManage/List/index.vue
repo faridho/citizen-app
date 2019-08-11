@@ -80,14 +80,7 @@ import axios from 'axios'
 export default {
   data: () => ({
     dialog: false,
-    items: [
-      {
-        "id": 1,
-        "jumlah_pengeluaran": 200000,
-        "keterangan": "PerbaikanPortal",
-        "tgl_keluar": "2019-08-04"
-      }
-    ],
+    items: [],
 
     jumlahPengeluaran: '',
     keterangan: '',
@@ -96,7 +89,7 @@ export default {
   }),
 
   mounted() {
-    //this.getData();
+    this.getData();
     eventBus.$on('DATA_LOADED', this.getData);
   },
 
@@ -104,7 +97,7 @@ export default {
 
     async getData() {
       const result = await axios
-        .get(URL + '/anouncement/get')
+        .get(URL + '/anggaran/getdanatetap')
         .then(response => response.data.data);
 
       this.items = result;
@@ -114,13 +107,13 @@ export default {
     async detail(target) {
       this.dialog = true;
 
-      /*const detail = await axios
-        .get(URL + '/anouncement/get/' + target)
-        .then(response => response.data.data);*/
+      const detail = await axios
+        .get(URL + '/anggaran/getdanatetap/' + target)
+        .then(response => response.data.data);
 
-      this.jumlahPengeluaran = 200000;
-      this.keterangan = "Perbaikan Portal";
-      this.tglKeluar = "2019-09-04"
+      this.jumlahPengeluaran = detail.jumlah_pengeluaran
+      this.keterangan = detail.keterangan;
+      this.tglKeluar = detail.tgl_keluar;
     },
 
     close() {

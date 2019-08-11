@@ -33,9 +33,22 @@
         <v-card-text>
           <v-form v-model="valid" ref="form" lazy-validation>
             <v-text-field
+              label="ID"
+              v-model="id"
+              disabled
+              :rules="nameRules">
+            </v-text-field>
+            <v-text-field
               label="Nama Kepala Keluarga"
               v-model="namaKepalaKeluarga"
               :rules="nameRules">
+            </v-text-field>
+            <v-text-field
+              label="Password"
+              type="password"
+              :rules="nameRules"
+              disabled
+              v-model="password">
             </v-text-field>
             <v-text-field
               label="No Kartu Keluarga"
@@ -91,8 +104,9 @@ export default {
     loading: false,
 
     items: [],
-
+    id: '',
     namaKepalaKeluarga: '',
+    password: '',
     noKK: '',
     telepon: '',
     noRumah: '',
@@ -125,7 +139,9 @@ export default {
         .get(URL + '/master/datakepalakeluarga/' + target)
         .then(response => response.data.data)
 
+      this.id = detail.id,
       this.namaKepalaKeluarga = detail.nama_kepala_keluarga;
+      this.password = detail.password,
       this.telepon = detail.telepon;
       this.noKK = detail.no_kk,
       this.noRumah = detail.no_rumah;
@@ -135,8 +151,36 @@ export default {
     },
 
     async update() {
+        if (this.$refs.form.validate()) {
+          this.loading = true;
+          const payload = {
+            id: this.id,
+            namaKepalaKeluarga: this.namaKepalaKeluarga,
+            password: this.password,
+            noKK: this.noKK,
+            telepon: this.telepon,
+            noRumah: parseInt(this.noRumah),
+            statusRumah: this.statusRumah,
+            pekerjaan: this.pekerjaan,
+            penghasilan: parseFloat(this.penghasilan)
+          }
 
-    },
+          const storing = await axios
+            .post(URL + '/master/updatekepalakeluarga', payload, undefined)
+            .then(response => response.data);
+
+          if (storing.status === true) {
+            this.$snackbar(storing.message);
+            this.dialog = false;
+            this.loading = false;
+            eventBus.$emit('DATA_LOADED');
+          } else {
+            this.$snackbar(storing.message);
+            this.loading = false;
+          }
+
+        }
+      },
 
     close() {
       this.dialog = false;

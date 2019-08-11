@@ -110,7 +110,7 @@ export default {
 
 
       const storing = await axios
-        .post(URL + '/anouncement/insert', payload, undefined)
+        .post(URL + '/anggaran/insertdatatetap', payload, undefined)
         .then(response => response.data);
 
       if (storing.status === true) {

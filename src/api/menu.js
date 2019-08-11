@@ -58,6 +58,12 @@ const menus = [
     icon: 'mdi-file-replace',
     href: '/lpj',
     title: 'LPJ Dana'
+  },
+  {
+    name: 'logout',
+    icon: 'mdi-logout',
+    href: '/',
+    title: 'Logout'
   }
 ]
 
