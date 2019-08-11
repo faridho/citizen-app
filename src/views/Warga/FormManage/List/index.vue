@@ -31,88 +31,97 @@
           <h3>Detail Warga</h3>
         </v-card-title>
         <v-card-text>
-          <v-autocomplete
-            v-model="kepalaKeluarga"
-            :items="KKList"
-            :rules="nameRules"
-            label="Kepala Keluarga">
-          </v-autocomplete>
+          <v-form v-model="valid" ref="form" lazy-validation>
+            <v-text-field
+              v-model="idWarga"
+              label="ID Warga"
+              readonly>
+            </v-text-field>
 
-          <v-text-field
-            v-model="noKtp"
-            label="No KTP"
-            :rules="nameRules"
-            type="number">
-          </v-text-field>
+            <v-autocomplete
+              v-model="kepalaKeluarga"
+              :items="KKList"
+              :rules="nameRules"
+              readonly
+              label="Kepala Keluarga">
+            </v-autocomplete>
 
-          <v-select
-            v-model="agama"
-            label="Agama"
-            :rules="nameRules"
-            :items="agamaList">
-          </v-select>
+            <v-text-field
+              v-model="noKtp"
+              label="No KTP"
+              :rules="nameRules"
+              type="number">
+            </v-text-field>
 
-          <v-text-field
-            v-model="namaLengkap"
-            label="Nama Lengkap"
-            :rules="nameRules">
+            <v-select
+              v-model="agama"
+              label="Agama"
+              :rules="nameRules"
+              :items="agamaList">
+            </v-select>
 
-          </v-text-field>
+            <v-text-field
+              v-model="namaLengkap"
+              label="Nama Lengkap"
+              :rules="nameRules">
 
-          <v-select
-            v-model="status"
-            label="Status Dalam Keluarga"
-            :rules="nameRules"
-            :items="statusList">
-          </v-select>
+            </v-text-field>
 
-          <v-radio-group
-            v-model="jk"
-            label="Jenis Kelamin"
-            :mandatory="false">
+            <v-select
+              v-model="status"
+              label="Status Dalam Keluarga"
+              :rules="nameRules"
+              :items="statusList">
+            </v-select>
 
-            <v-radio label="Laki-Laki" value="1"></v-radio>
-            <v-radio label="Perempuan" value="2"></v-radio>
-          </v-radio-group>
+            <v-radio-group
+              v-model="jk"
+              label="Jenis Kelamin"
+              :mandatory="false">
 
-          <v-text-field
-            v-model="tempatLahir"
-            label="Tempat Lahir"
-            :rules="nameRules">
-          </v-text-field>
+              <v-radio label="Laki-Laki" value="1"></v-radio>
+              <v-radio label="Perempuan" value="2"></v-radio>
+            </v-radio-group>
 
-          <v-menu
-            v-model="menu2"
-            :close-on-content-click="false"
-            :nudge-right="40"
-            lazy
-            transition="scale-transition"
-            offset-y
-            full-width
-            min-width="290px">
-            <template v-slot:activator="{ on }">
-              <v-text-field
-                v-model="tanggalLahir"
-                label="Tanggal Lahir"
-                prepend-icon="mdi-calendar"
-                readonly
-                v-on="on"></v-text-field>
-            </template>
-            <v-date-picker v-model="tanggalLahir" @input="menu2 = false"></v-date-picker>
-          </v-menu>
+            <v-text-field
+              v-model="tempatLahir"
+              label="Tempat Lahir"
+              :rules="nameRules">
+            </v-text-field>
 
-          <v-select
-            v-model="pekerjaan"
-            label="Pekerjaan"
-            :rules="nameRules"
-            :items="pekerjaanList">
-          </v-select>
+            <v-menu
+              v-model="menu2"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              lazy
+              transition="scale-transition"
+              offset-y
+              full-width
+              min-width="290px">
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="tanggalLahir"
+                  label="Tanggal Lahir"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-on="on"></v-text-field>
+              </template>
+              <v-date-picker v-model="tanggalLahir" @input="menu2 = false"></v-date-picker>
+            </v-menu>
 
-          <v-text-field
-            v-model="penghasilan"
-            label="Penghasilan"
-            :rules="nameRules">
-          </v-text-field>
+            <v-select
+              v-model="pekerjaan"
+              label="Pekerjaan"
+              :rules="nameRules"
+              :items="pekerjaanList">
+            </v-select>
+
+            <v-text-field
+              v-model="penghasilan"
+              label="Penghasilan"
+              :rules="nameRules">
+            </v-text-field>
+          </v-form>
         </v-card-text>
         <v-card-actions>
           <v-btn block flat color="warning" outline @click="close">Batal</v-btn>
@@ -144,6 +153,7 @@ export default {
       agamaList: ['Islam', 'Katholik', 'Protestan', 'Budha', 'Hindu'],
       pekerjaanList: ['Pelajar', 'Mahasiswa', 'IRT', 'Karyawan Swasta', 'PNS', 'Wiraswasta'],
 
+      idWarga: '',
       kepalaKeluarga: '',
       noKtp: '',
       agama: '',
@@ -198,6 +208,7 @@ export default {
         .get(URL + '/master/datawarga/' + target)
         .then(response => response.data.data);
 
+      this.idWarga = detail.id;
       this.kepalaKeluarga = detail.kepala_keluarga;
       this.noKtp = detail.no_ktp;
       this.agama = detail.agama,
@@ -211,7 +222,36 @@ export default {
     },
 
     async update() {
+      if (this.$refs.form.validate()) {
+        this.loading = true;
+        const payload = {
+          'id' : this.idWarga,
+          'agama': this.agama,
+          'noKtp': this.noKtp,
+          'namaLengkap': this.namaLengkap,
+          'jk': this.jk,
+          'tempatLahir': this.pekerjaan,
+          'tanggalLahir': this.tanggalLahir,
+          'status': this.status,
+          'pekerjaan': this.pekerjaan,
+          'penghasilan': this.penghasilan
+        }
 
+
+        const storing = await axios
+          .post(URL + '/master/updatewarga', payload, undefined)
+          .then(response => response.data);
+
+        if (storing.status === true) {
+          this.dialog = false;
+          this.loading = false;
+          eventBus.$emit('DATA_LOADED');
+          this.$snackbar(storing.message);
+        } else {
+          this.loading = false;
+          this.$snackbar(storing.message);
+        }
+      }
     },
 
     close() {

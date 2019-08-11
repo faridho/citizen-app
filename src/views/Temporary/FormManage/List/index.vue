@@ -28,7 +28,7 @@
       transition="dialog-bottom-transition">
       <v-card>
         <v-card-title>
-          <h3>Detail Warga</h3>
+          <h3>Detail Warga Temporary</h3>
         </v-card-title>
         <v-card-text>
           <v-layout>
@@ -36,18 +36,21 @@
               <v-text-field
                 v-model="nama"
                 :rules="nameRules"
+                readonly
                 label="Nama Lengkap"></v-text-field>
 
               <v-select
                 v-model="jk"
                 :items="jkList"
                 :rules="nameRules"
+                readonly
                 label="Jenis Kelamin">
               </v-select>
 
               <v-text-field
                 v-model="tempatLahir"
                 label="Tempat Lahir"
+                readonly
                 :rules="nameRules">
               </v-text-field>
 
@@ -75,6 +78,7 @@
                 v-model="agama"
                 label="Agama"
                 :rules="nameRules"
+                readonly
                 :items="agamaList">
               </v-select>
 
@@ -82,17 +86,20 @@
                 v-model="noTelp"
                 :rules="nameRules"
                 type="number"
+                readonly
                 label="No Telp"></v-text-field>
 
               <v-text-field
                 v-model="identitas"
                 :rules="nameRules"
+                readonly
                 label="No Identitas"></v-text-field>
 
               <v-select
                 v-model="jenisIdentitas"
                 :items="jenisIdentitasList"
                 :rules="nameRules"
+                readonly
                 label="Jenis Identitas">
               </v-select>
 
@@ -102,18 +109,21 @@
                 :rules="nameRules"
                 item-text="name"
                 item-value="name"
+                readonly
                 label="Kewarganegaraan">
               </v-autocomplete>
 
               <v-text-field
                 v-model="kotaAsal"
                 label="Kota Asal"
+                readonly
                 :rules="nameRules">
               </v-text-field>
 
               <v-textarea
                 v-model="alamat"
                 :rules="nameRules"
+                readonly
                 label="Alamat">
               </v-textarea>
 
@@ -121,6 +131,7 @@
                 v-model="pemilikTempat"
                 :items="KKList"
                 :rules="nameRules"
+                readonly
                 label="Pemilik Tempat Sewa">
               </v-autocomplete>
 
@@ -128,18 +139,21 @@
                 v-model="tipeSewa"
                 :items="types"
                 :rules="nameRules"
+                readonly
                 label="Tipe Tempat Sewa">
               </v-select>
 
               <v-text-field
                 v-model="hargaSewa"
                 :rules="nameRules"
+                readonly
                 label="Harga Sewa"></v-text-field>
 
               <v-select
                 v-model="pekerjaan"
                 :items="pekerjaanList"
                 :rules="nameRules"
+                readonly
                 label="Pekerjaan">
               </v-select>
 
@@ -147,8 +161,7 @@
           </v-layout>
         </v-card-text>
         <v-card-actions>
-          <v-btn block flat color="warning" outline @click="close">Batal</v-btn>
-          <v-btn :loading="loading" block color="warning" @click="update">Update</v-btn>
+          <v-btn block flat color="warning" outline @click="close">Tutup</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

@@ -86,73 +86,102 @@
   </div>
 </template>
 <script>
-import eventBus from '@/views/eventBus'
-import URL from '@/api/url'
-import axios from 'axios'
-import VueCookies from 'vue-cookies'
+  import eventBus from '@/views/eventBus'
+  import URL from '@/api/url'
+  import axios from 'axios'
+  import VueCookies from 'vue-cookies'
 
-export default {
-  data() {
-    const user = VueCookies.get('session');
-    return {
-      valid: true,
-      dialog: false,
-      loading: false,
+  export default {
+    data() {
+      const user = VueCookies.get('session');
+      return {
+        valid: true,
+        dialog: false,
+        loading: false,
 
-      items: [],
+        items: [],
 
-      id: user.id,
-      namaKepalaKeluarga: '',
-      noKK: '',
-      telepon: '',
-      noRumah: '',
-      statusRumah: '',
-      statusRumahList: ['Milik Sendiri', 'Kontrak', 'Numpang', 'Kost'],
-      pekerjaan: '',
-      penghasilan: 0,
-      password: '',
+        id: user.id,
+        namaKepalaKeluarga: '',
+        noKK: '',
+        telepon: '',
+        noRumah: '',
+        statusRumah: '',
+        statusRumahList: ['Milik Sendiri', 'Kontrak', 'Numpang', 'Kost'],
+        pekerjaan: '',
+        penghasilan: 0,
+        password: '',
 
-      nameRules: [v => !!v || "Kolom wajib diisi"]
-    }
-  },
-
-  mounted() {
-    this.getData();
-    eventBus.$on('DATA_LOADED', this.getData);
-  },
-
-  methods: {
-    async getData() {
-      const result = await axios
-        .get(URL + '/master/alldatakepalakeluarga/' + this.id)
-        .then(response => response.data.data);
-
-      this.items = result;
+        nameRules: [v => !!v || "Kolom wajib diisi"]
+      }
     },
 
-    async detail(target) {
-      this.dialog = true;
-
-      const detail = await axios
-        .get(URL + '/master/datakepalakeluarga/' + target)
-        .then(response => response.data.data)
-
-      this.namaKepalaKeluarga = detail.nama_kepala_keluarga;
-      this.telepon = detail.telepon;
-      this.noKK = detail.no_kk,
-      this.noRumah = detail.no_rumah;
-      this.statusRumah = detail.status_rumah;
-      this.pekerjaan = detail.pekerjaan;
-      this.penghasilan = detail.penghasilan;
+    mounted() {
+      this.getData();
+      eventBus.$on('DATA_LOADED', this.getData);
     },
 
-    async update() {
+    methods: {
+      async getData() {
+        const result = await axios
+          .get(URL + '/master/alldatakepalakeluarga/' + this.id)
+          .then(response => response.data.data);
 
-    },
+        this.items = result;
+      },
 
-    close() {
-      this.dialog = false;
+      async detail(target) {
+        this.dialog = true;
+
+        const detail = await axios
+          .get(URL + '/master/datakepalakeluarga/' + target)
+          .then(response => response.data.data)
+
+        this.namaKepalaKeluarga = detail.nama_kepala_keluarga;
+        this.telepon = detail.telepon;
+        this.password = detail.password;
+        this.noKK = detail.no_kk,
+          this.noRumah = detail.no_rumah;
+        this.statusRumah = detail.status_rumah;
+        this.pekerjaan = detail.pekerjaan;
+        this.penghasilan = detail.penghasilan;
+      },
+
+      async update() {
+        if (this.$refs.form.validate()) {
+          this.loading = true;
+          const payload = {
+            id: this.id,
+            namaKepalaKeluarga: this.namaKepalaKeluarga,
+            password: this.password,
+            noKK: this.noKK,
+            telepon: this.telepon,
+            noRumah: parseInt(this.noRumah),
+            statusRumah: this.statusRumah,
+            pekerjaan: this.pekerjaan,
+            penghasilan: parseFloat(this.penghasilan)
+          }
+
+          const storing = await axios
+            .post(URL + '/master/updatekepalakeluarga', payload, undefined)
+            .then(response => response.data);
+
+          if (storing.status === true) {
+            this.$snackbar(storing.message);
+            this.dialog = false;
+            this.loading = false;
+            eventBus.$emit('DATA_LOADED');
+          } else {
+            this.$snackbar(storing.message);
+            this.loading = false;
+          }
+
+        }
+      },
+
+      close() {
+        this.dialog = false;
+      }
     }
   }
-}
 </script>

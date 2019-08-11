@@ -119,12 +119,14 @@
             .then(response => response.data);
 
           if (storing.status === true) {
+            this.$snackbar(storing.message);
             this.dialog = false;
             this.loading = false;
           } else {
+            this.$snackbar(storing.message);
             this.loading = false;
           }
-          this.$snackbar("Pendaftaran Berhasil Silah Login");
+          
         }
       },
 

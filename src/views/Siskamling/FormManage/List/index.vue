@@ -37,14 +37,14 @@
               v-for="detail in detailSiskamling" :key="detail.id"
               rel="noopener nofollow"
               ripple
-              @click="edit(detail.id, $event.target)"
+              @click="edit(detail.id, detail.status_warga)"
               avatar>
               <v-list-tile-avatar>
                 <v-icon>mdi-account mdi-48px </v-icon>
               </v-list-tile-avatar>
 
               <v-list-tile-content>
-                <v-list-tile-title>{{ detail.nama_lengkap }}</v-list-tile-title>
+                {{ detail.nama_lengkap }}
                 <v-list-tile-sub-title><strong>Status: </strong> {{ detail.status_warga }}</v-list-tile-sub-title>
               </v-list-tile-content>
               <v-list-tile-action>
@@ -70,14 +70,16 @@
           <h3>Laporan Siskamling</h3>
         </v-card-title>
         <v-card-text>
-          <v-form>
-    
+         <v-form v-model="valid" ref="form" lazy-validation>
+
             <v-select
+              v-model="statusLaporan"
               :items="reportStatus"
               label="Status"
             >
             </v-select>
             <v-textarea
+              v-model="isiLaporan"
               label="Isi Laporan">
             </v-textarea>
             
@@ -85,7 +87,7 @@
         </v-card-text>
         <v-card-actions>
           <v-btn block flat color="warning" outline @click="closeReport">Kembali</v-btn>
-          <v-btn :loading="loading" block color="warning" @click="simpan">Simpan</v-btn>
+          <v-btn :loading="loading" block color="warning" @click="simpan">Laporkan</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -115,7 +117,11 @@ export default {
 
         id: '',
 
-        reportStatus: ['Aman', 'Tidak Aman']
+        reportStatus: ['Aman', 'Tidak Aman'],
+
+        idSiskamling: '',
+        statusLaporan: '',
+        isiLaporan: ''
     } 
   },
 
@@ -177,15 +183,56 @@ export default {
 
       this.detailSiskamling = data;
       this.id = id;
+      this.idSiskamling = target;
     },
 
-    async edit(target) {
+    async edit(target, status) {
       if(target == this.user) {
-        this.$snackbar("Update Ketersediaan Ronda 'SIAP'");
+        const payload = {
+          id: target,
+          status: status
+        };
+        
+
+        const store = await axios
+        .post(URL + '/siskamling/updateketersediaan/', payload, undefined)
+        .then(response => response.data);
+
+        if(store.status === true) {
+          this.$snackbar(store.message);
+          eventBus.$emit('DATA_LOADED');
+        }else {
+          this.$snackbar(store.message);
+        }
       }else {
         this.$snackbar("Bukan Profil Anda");
       }
       
+    },
+
+    async simpan() {
+      if (this.$refs.form.validate()) { 
+        this.loading = true;
+        
+        const payload = {
+          idSiskamling: this.idSiskamling,
+          statusLaporan: this.statusLaporan,
+          isiLaporan: this.isiLaporan
+        }
+
+        const store = await axios 
+          .post(URL + '/siskamling/insertreport', payload, undefined)
+          .then(response => response.data);
+
+        if(store.status === true) {
+          this.$snackbar(store.message);
+          this.loading = false;
+          this.dialogReport = false;
+        }else {
+          this.$snackbar(store.message);
+          this.loading = false;
+        }
+      }
     },
 
     async report() {
