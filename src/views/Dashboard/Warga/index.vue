@@ -45,6 +45,9 @@
           <v-flex xs12 style="margin-top: 10px;">
             <ChartReligion />
           </v-flex>
+          <v-flex xs12>
+            <KodeTable />
+          </v-flex>
         </v-layout>
       </v-container>
     </v-content>
@@ -61,6 +64,7 @@
   import ChartRevenue from './components/ChartRevenue'
   import ChartJob from './components/ChartJob'
   import ChartReligion from './components/ChartReligion'
+  import KodeTable from './components/KodeTable'
 
   export default {
     data() {
@@ -80,7 +84,8 @@
       ChartAge,
       ChartRevenue,
       ChartJob,
-      ChartReligion
+      ChartReligion,
+      KodeTable
     }
   }
 </script>
