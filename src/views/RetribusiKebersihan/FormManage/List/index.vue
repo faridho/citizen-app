@@ -57,7 +57,16 @@
             label="Nominal"
             readonly>
           </v-text-field>
+
+          <v-select
+            v-model="jenisPembayaran"
+            :items="metode"
+            readonly
+            :rules="nameRules"
+            label="Jenis Pembayaran">
+          </v-select>
         </v-card-text>
+
         <v-card-actions>
           <v-btn block flat color="warning" outline @click="close">Tutup</v-btn>
         </v-card-actions>
@@ -88,6 +97,17 @@ export default {
       yearList: [2019, 2020, 2021, 2022, 2023, 2013],
       tahun: '',
       nominal: 0,
+      metode: [
+        {
+          text: 'Cash',
+          value: 'Cash'
+        },
+        {
+          text: 'Transfer',
+          value: 'Transfer'
+        }
+      ],
+      jenisPembayaran: ''
     }
   },
 
@@ -136,6 +156,7 @@ export default {
       this.bulan = detail.bulan;
       this.tahun = detail.tahun;
       this.nominal = detail.nominal;
+      this.jenisPembayaran = detail.jenis_pembayaran;
 
     },
 

@@ -77,11 +77,39 @@
                   v-money="money"
                 >
                 </v-text-field>
+                <v-select
+                  v-model="jenisPembayaran"
+                  :items="metode"
+                  :rules="nameRules"
+                  label="Jenis Pembayaran"
+                >
+                </v-select>
               </v-form>
             </v-card-text>
             <v-card-actions>
               <v-btn block flat color="warning" outline @click="close">Batal</v-btn>
               <v-btn :loading="loading" block color="warning" @click="submit">Simpan</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog
+          v-model="confirm"
+          hide-overlay>
+          <v-card>
+            <v-card-title class="text-xs-center">
+              <h4>Pembayaran Retribusi</h4>
+            </v-card-title>
+            <v-card-text>
+              <img class="text-xs-center" src="https://res.cloudinary.com/duzt2dvg6/image/upload/v1565702281/React%20Native/Assets/bank-dki.png" /><br/>
+              <p>Pembayaran dapat dilakukan dengan dua metode berikut:</p>
+              <ol>
+                <li>Transfer ke No Rek. 6007898766 a/n Ali Hasan Bank DKI</li>
+                <li>Langsung di Ketua RT</li>
+              </ol>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn block flat color="warning" outline @click="closePembayaran">Tutup</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -107,6 +135,7 @@ export default {
     return {
       valid: true,
       drawer: null,
+      confirm: false,
       dialog: false,
       loading: false,
 
@@ -129,7 +158,19 @@ export default {
         suffix: '',
         precision: '',
         masked: false /* doesn't work with directive */
-      }
+      },
+
+      metode: [
+        {
+          text: 'Cash',
+          value: 'Cash'
+        },
+        {
+          text: 'Transfer',
+          value: 'Transfer'
+        }
+      ],
+      jenisPembayaran: '',
     }
   },
 
@@ -160,12 +201,18 @@ export default {
       this.dialog = false;
     },
 
+    closePembayaran() {
+      this.confirm = false;
+      eventBus.$emit('DATA_LOADED');
+    },
+
     async submit() {
       this.loading = true;
       const payload = {
         kepalaKeluarga: this.kepalaKeluarga,
         bulan: parseInt(this.bulan),
         tahun: parseInt(this.tahun),
+        jenisPembayaran: this.jenisPembayaran,
         nominal: parseFloat(this.nominal.replace(/,/g, ''))
       }
 
@@ -177,8 +224,7 @@ export default {
       if (storing.status === true) {
         this.dialog = false;
         this.loading = false;
-        eventBus.$emit('DATA_LOADED');
-        this.$snackbar(storing.message);
+        this.confirm = true;
       } else {
         this.loading = false;
         this.$snackbar(storing.message);

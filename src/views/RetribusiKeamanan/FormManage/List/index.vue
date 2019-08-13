@@ -57,6 +57,14 @@
             label="Nominal"
             readonly>
           </v-text-field>
+
+          <v-select
+            v-model="jenisPembayaran"
+            :items="metode"
+            readonly
+            :rules="nameRules"
+            label="Jenis Pembayaran">
+          </v-select>
         </v-card-text>
         <v-card-actions>
           <v-btn block flat color="warning" outline @click="close">Tutup</v-btn>
@@ -66,82 +74,94 @@
   </div>
 </template>
 <script>
-import months from '@/views/list'
-import eventBus from '@/views/eventBus'
-import URL from '@/api/url'
-import axios from 'axios'
-import VueCookies from 'vue-cookies'
+  import months from '@/views/list'
+  import eventBus from '@/views/eventBus'
+  import URL from '@/api/url'
+  import axios from 'axios'
+  import VueCookies from 'vue-cookies'
 
-export default {
-  data() {
-    const user = VueCookies.get('session');
-    return {
-      dialog: false,
-      items: [],
+  export default {
+    data() {
+      const user = VueCookies.get('session');
+      return {
+        dialog: false,
+        items: [],
 
-      KKList: [],
+        KKList: [],
 
-      id: user.id,
-      kepalaKeluarga: '',
-      monthList: months,
-      bulan: '',
-      yearList: [2019, 2020, 2021, 2022, 2023, 2013],
-      tahun: '',
-      nominal: 0,
-    }
-  },
+        id: user.id,
+        kepalaKeluarga: '',
+        monthList: months,
+        bulan: '',
+        yearList: [2019, 2020, 2021, 2022, 2023, 2013],
+        tahun: '',
+        nominal: 0,
+        metode: [
+          {
+            text: 'Cash',
+            value: 'Cash'
+          },
+          {
+            text: 'Transfer',
+            value: 'Transfer'
+          }
+        ],
+        jenisPembayaran: ''
+      }
+    },
 
-  mounted() {
-    this.getData();
-    this.getKK();
-    eventBus.$on('DATA_LOADED', this.getData);
-  },
+    mounted() {
+      this.getData();
+      this.getKK();
+      eventBus.$on('DATA_LOADED', this.getData);
+    },
 
-  methods: {
-    async getKK() {
-      const data = await axios
-        .get(URL + '/master/alldatakepalakeluarga/' + this.id)
-        .then(response => response.data.data);
+    methods: {
+      async getKK() {
+        const data = await axios
+          .get(URL + '/master/alldatakepalakeluarga/' + this.id)
+          .then(response => response.data.data);
 
-      const newList = [];
-      for (const item of data) {
-        let element = {
-          value: item.id,
-          text: item.nama_kepala_keluarga
+        const newList = [];
+        for (const item of data) {
+          let element = {
+            value: item.id,
+            text: item.nama_kepala_keluarga
+          }
+
+          newList.push(element);
         }
 
-        newList.push(element);
+        this.KKList = newList;
+      },
+
+      async getData() {
+        const result = await axios
+          .get(URL + '/retribusi/allkeamanan/' + this.id)
+          .then(response => response.data.data);
+
+        this.items = result;
+      },
+
+
+      async detail(target) {
+        this.dialog = true;
+
+        const detail = await axios
+          .get(URL + '/retribusi/keamanan/' + target)
+          .then(response => response.data.data);
+
+        this.kepalaKeluarga = detail.kepala_keluarga;
+        this.bulan = detail.bulan;
+        this.tahun = detail.tahun;
+        this.nominal = detail.nominal;
+        this.jenisPembayaran = detail.jenis_pembayaran;
+
+      },
+
+      close() {
+        this.dialog = false;
       }
-
-      this.KKList = newList;
-    },
-
-    async getData() {
-      const result = await axios
-        .get(URL + '/retribusi/allkeamanan/' + this.id)
-        .then(response => response.data.data);
-
-      this.items = result;
-    },
-
-
-    async detail(target) {
-      this.dialog = true;
-
-      const detail = await axios
-        .get(URL + '/retribusi/keamanan/' + target)
-        .then(response => response.data.data);
-
-      this.kepalaKeluarga = detail.kepala_keluarga;
-      this.bulan = detail.bulan;
-      this.tahun = detail.tahun;
-      this.nominal = detail.nominal;
-
-    },
-
-    close() {
-      this.dialog = false;
     }
   }
-}
 </script>
