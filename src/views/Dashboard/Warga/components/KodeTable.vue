@@ -97,6 +97,7 @@
   import eventBus from '@/views/eventBus'
   import axios from 'axios'
   import URL from '@/api/url'
+  import jsPDF from 'jspdf'
 
   export default {
     data() {
@@ -148,16 +149,17 @@
       },
 
       async print(id) {
-        this.dialog = true;
-
+        
         const detail = await axios
           .get(URL + '/master/kodewarga/' + id)
           .then(response => response.data.data);
 
-        this.id = detail.id;
-        this.nama_warga = detail.nama_warga;
-        this.kode_warga = detail.kode;
-
+        var doc = new jsPDF();
+        doc.text(detail.nama_warga, 70, 50);
+        doc.text('Kode Warga: ' + detail.kode, 70, 60);
+        doc.setFontSize(9);
+        doc.text('*Stempel Kelurahan Kemanggisan', 70, 100);
+        doc.save(detail.nama_warga + '.pdf');
       },
 
       async submit() {

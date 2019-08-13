@@ -32,7 +32,9 @@
       </v-card-text>
       <v-dialog
         v-model="dialog"
-        width="700">
+        fullscreen
+          hide-overlay
+          transition="dialog-bottom-transition">
         <v-card>
           <v-card-title
             class="headline grey lighten-2"
