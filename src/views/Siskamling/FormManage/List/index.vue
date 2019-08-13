@@ -6,7 +6,7 @@
         v-for="item in items" :key="item.id"
         rel="noopener nofollow"
         ripple
-        @click="detail(item.id, $event.target)"
+        @click="detail(item.id)"
         avatar>
         <v-list-tile-avatar>
           <v-icon>mdi-calendar mdi-48px </v-icon>
@@ -55,6 +55,7 @@
           <v-form v-model="valid" ref="form" lazy-validation>
             <v-spacer></v-spacer>
             <v-btn
+               v-if="status == null"
               color="warning"
               flat
               outline
@@ -91,11 +92,15 @@
               </v-flex>
             </v-layout>
           </v-form>
+          <p style="color: red;">Isi Laporan:</p> {{ isiLaporan }}
         </v-card-text>
         <v-card-actions>
-          <v-btn flat color="warning" outline @click="close">Batal</v-btn>
-          <v-btn :loading="loading" block color="warning" @click="update">Update</v-btn>
-          <v-btn block color="warning" @click="report">Laporan</v-btn>
+          <v-btn block flat color="warning" outline @click="close">Tutup</v-btn>
+
+          <v-btn v-if="status == null" :loading="loading" block color="warning" @click="update">Update</v-btn>
+          
+          <v-btn v-if="status != null" block color="success">{{ status }}</v-btn>
+          <v-btn v-else block color="warning" @click="report">Laporan</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -156,7 +161,9 @@
 
       idSiskamling: '',
       statusLaporan: '',
-      isiLaporan: ''
+      isiLaporan: '',
+
+      status: null
 
     }),
 
@@ -237,6 +244,18 @@
           .get(URL + '/siskamling/getsiskamling/' + target)
           .then(response => response.data.data);
 
+        const dataStatus = await axios
+          .get(URL + '/siskamling/ceklaporan/' + target)
+          .then(response => response.data.data);
+
+        if(dataStatus != null) {
+          this.status = dataStatus.status_siskamling;
+          this.isiLaporan = dataStatus.isi_laporan;
+        } else {
+          this.status = null;
+          this.isiLaporan = '';
+        }
+        
         this.detailSiskamling = data;
         this.id = id;
       },
