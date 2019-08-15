@@ -4,6 +4,7 @@
       <v-card>
         <v-card-title>
           <h2>Register Warga</h2>
+          <p>* Pastikan mendaftar di lokasi tempat tinggal</p>
         </v-card-title>
         <v-card-text>
           <v-form v-model="valid" ref="form" lazy-validation>
@@ -56,6 +57,16 @@
               v-model="penghasilan"
               v-money="money">
             </v-text-field>
+            <v-text-field
+              label="Lat"
+              v-model="lat"
+              readonly>
+            </v-text-field>
+            <v-text-field
+              label="Lng"
+              v-model="lng"
+              readonly>
+            </v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -71,6 +82,7 @@
   import Vue from 'vue'
   import axios from 'axios'
   import money from 'v-money'
+
   Vue.use(money, { precision: 4 })
   export default {
     data: () => ({
@@ -95,10 +107,40 @@
         suffix: '',
         precision: '',
         masked: false /* doesn't work with directive */
-      }
+      },
+
+      marker: {},
+      lat: '',
+      lng: ''
+
     }),
 
+    mounted() {
+      this.initMap();
+    },
+
     methods: {
+      initMap() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(this.showPosition);
+        } else {
+          alert("Geolocation is not supported by this browser.");
+        }
+      },
+
+      showPosition(position) {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        this.marker = {
+          lat,
+          lng
+        }
+
+        this.lat = this.marker.lat;
+        this.lng = this.marker.lng;
+      },
+
       async submit() {
         if (this.$refs.form.validate()) {
           this.loading = true;
@@ -111,7 +153,9 @@
             noRumah: parseInt(this.noRumah),
             statusRumah: this.statusRumah,
             pekerjaan: this.pekerjaan,
-            penghasilan: parseFloat(this.penghasilan.replace(/,/g, ''))
+            penghasilan: parseFloat(this.penghasilan.replace(/,/g, '')),
+            lat: this.lat,
+            lng: this.lng
           }
 
           const storing = await axios
@@ -126,10 +170,12 @@
             this.$snackbar(storing.message);
             this.loading = false;
           }
-          
+
         }
       },
 
-    }
+    },
+
+
   }
 </script>
