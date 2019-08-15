@@ -61,6 +61,7 @@
               </template>
             </v-data-table>
           </v-card-text>
+          <iframe width="100%" height="450" frameborder="0" style="border:0" :src="'https://www.google.com/maps/embed/v1/place?q=' + lat + ',' + lng + '&amp;key=AIzaSyBBpZdO5eQYk1-4ny7IlQBJyAOYAKH4PxI'"></iframe>
           <v-divider></v-divider>
           <v-card-actions>
             <v-btn
@@ -149,6 +150,10 @@
 
         items: [],
         warga: [],
+
+        lat: '',
+        lng: '',
+        map: ''
       }
     },
 
@@ -172,7 +177,14 @@
           .get(URL + '/dashboard/warga/' + id)
           .then(response => response.data.data);
 
+        const warga = await axios
+          .get(URL + '/master/datakepalakeluarga/' + id)
+          .then(response => response.data.data);
+        this.lat = warga.lat;
+        this.lng = warga.lng;
         this.warga = result;
+
+        this.map = 'https://www.google.com/maps/embed/v1/place?q="' + warga.lat + ',' + warga.lng + '&amp;key=AIzaSyBBpZdO5eQYk1-4ny7IlQBJyAOYAKH4PxI';
       },
 
       close() {
